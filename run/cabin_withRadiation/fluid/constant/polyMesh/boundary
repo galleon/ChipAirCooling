@@ -25,7 +25,7 @@ FoamFile
 
         shadowRegion    region0;
         shadowPatch     bayHeatTransmissiveWall;
-        attached        off;
+        attached        on;
         isWall          on;
 
     }
@@ -37,7 +37,7 @@ FoamFile
 
         shadowRegion    region0;
         shadowPatch     cabHeatTransmissiveWall;
-        attached        off;
+        attached        on;
         isWall          on;
 
     }
@@ -61,7 +61,7 @@ FoamFile
 
         shadowRegion    solid;
         shadowPatch     toFluidR;
-        attached        off;
+        attached        on;
         isWall          on;
     }
     cabInlet
@@ -78,7 +78,7 @@ FoamFile
 
         shadowRegion    solid;
         shadowPatch     toFluidL;
-        attached        off;
+        attached        on;
         isWall          on;
     }
     passengers
