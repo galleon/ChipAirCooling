@@ -1,0 +1,45 @@
+thermalModel/thermalModel.C
+thermalLaws          = thermalModel/thermalLaws
+
+$(thermalLaws)/thermalLaw/thermalLaw.C 
+$(thermalLaws)/thermalLaw/newThermalLaw.C
+$(thermalLaws)/constantThermal/constantThermal.C
+$(thermalLaws)/multiMaterialThermal/multiMaterialThermal.C
+$(thermalLaws)/multiMaterialZonesThermal/multiMaterialZonesThermal.C
+
+thermalGaps          = thermalModel/thermalGaps
+
+$(thermalGaps)/thermalGap/thermalGap.C 
+$(thermalGaps)/thermalGap/newThermalGap.C
+$(thermalGaps)/constantThermalGap/constantThermalGap.C
+$(thermalGaps)/constantResistanceThermalGap/constantResistanceThermalGap.C
+
+thermalSource          = thermalModel/thermalSource
+
+$(thermalSource)/thermalSource/thermalSource.C
+$(thermalSource)/thermalSource/newThermalSource.C
+$(thermalSource)/constantThermalSource/constantThermalSource.C
+
+fvPatchFields/controlledParabolicVelocity/controlledParabolicVelocityFvPatchVectorField.C
+
+fvPatchFields/chtRegionCoupleBase/chtRegionCoupleBase.C
+fvPatchFields/chtRcThermalDiffusivity/chtRcThermalDiffusivityFvPatchScalarField.C
+fvPatchFields/chtRcTemperature/chtRcTemperatureFvPatchScalarField.C
+fvPatchFields/chtRcThermalDiffusivityResistance/chtRcThermalDiffusivityResistanceFvPatchScalarField.C
+fvPatchFields/chtRcThermalDiffusivitySlave/chtRcThermalDiffusivitySlaveFvPatchScalarField.C
+
+fvPatchFields/extendedWallHeatTransfer/extendedWallHeatTransferFvPatchScalarField.C
+
+fvPatchFields/externalRadiation/externalRadiationSource/externalRadiationSource.C
+fvPatchFields/externalRadiation/externalRadiationSource/newExternalRadiationSource.C
+fvPatchFields/externalRadiation/constantFlux/constantFlux.C
+fvPatchFields/externalRadiation/viewFactor/viewFactor.C
+fvPatchFields/externalRadiation/planeToCylinder/planeToCylinder.C
+fvPatchFields/externalRadiation/pointSource/pointSource.C
+fvPatchFields/solidWallHeatFluxTemperature/solidWallHeatFluxTemperatureFvPatchScalarField.C
+fvPatchFields/adiabatic/adiabaticFvPatchScalarField.C
+
+functionObjects/heatFlux/heatFlux/heatFlux.C
+functionObjects/heatFlux/heatFluxFunctionObject/heatFluxFunctionObject.C
+
+LIB = $(FOAM_USER_LIBBIN)/libairbusMaterialModels

@@ -1,0 +1,69 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM Extend Project: Open Source CFD        |
+|  \\    /   O peration     | Version:  1.6-ext                               |
+|   \\  /    A nd           | Web:      www.extend-project.de                 |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      fvSchemes;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+ddtSchemes
+{
+    default         steadyState;
+}
+
+gradSchemes
+{
+    default         leastSquares;
+    //grad(p_rgh)     leastSquares;
+}
+
+divSchemes
+{
+    default         none;
+    //div(phi,U)      Gauss reconCentral cellLimited leastSquares 1.0;
+    div(phi,U)      Gauss upwind;
+    div(phi,T)      Gauss upwind;
+    div(phi,k)      Gauss upwind;
+    div(phi,omega)  Gauss upwind;
+    div((nuEff*dev(grad(U).T()))) Gauss linear;
+}
+
+laplacianSchemes
+{
+    default         none;
+    laplacian((1|A(U)),p_rgh) Gauss linear limited 0.5;
+    laplacian(kappaEff,T)     Gauss linear limited 0.5;
+    laplacian(gammaRad,G)     Gauss linear limited 0.5;
+    laplacian(DkEff,k)        Gauss linear limited 0.5;
+    laplacian(DomegaEff,omega) Gauss linear limited 0.5;
+    laplacian(nuEff,U) Gauss linear limited 0.5;
+}
+
+interpolationSchemes
+{
+    default                linear;
+
+    //interpolate(kappaEff)  linear;
+    //interpolate(U)         reconCentral phi cellLimited leastSquares 1.0;
+}
+
+snGradSchemes
+{
+    default         limited 0.5;
+}
+
+fluxRequired
+{
+    default         no;
+    p_rgh;
+}
+
+// ************************************************************************* //

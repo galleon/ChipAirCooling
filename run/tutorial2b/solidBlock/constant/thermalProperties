@@ -1,0 +1,89 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM Extend Project: Open Source CFD        |
+|  \\    /   O peration     | Version:  1.6-ext                               |
+|   \\  /    A nd           | Web:      www.extend-project.de                 |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      thermalProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+thermal
+{
+    type                    multiMaterialZones;
+
+    laws
+    (
+        pcbMaterial
+        {
+            type            constant;
+            rho             rho [1 -3 0 0 0] 10; // read, but not used
+            C               C [0 2 -2 -1 0] 1000; // read, but not used
+            k               k [1 1 -3 -1 0] 0.2;
+
+            zones           ( pcb );
+        }
+
+        chipMaterial0
+        {
+            type            constant;
+            rho             rho [1 -3 0 0 0] 10; // read, but not used
+            C               C [0 2 -2 -1 0] 1000; // read, but not used
+            k               k [1 1 -3 -1 0] 2;
+
+            zones           ( chip0 );
+        }
+
+        chipMaterial1
+        {
+            type            constant;
+            rho             rho [1 -3 0 0 0] 10; // read, but not used
+            C               C [0 2 -2 -1 0] 1000; // read, but not used
+            k               k [1 1 -3 -1  0] 2;
+
+            zones           ( chip1 );
+        }
+    );
+
+    gaps
+    (
+        chipGap0 // gap 0
+        {
+            type            constantResistance;
+            R               R [-1 0 3 1 0] 0.2;
+            zones           ( gap0 );
+        }
+
+        chipGap1 // gap 1
+        {
+            type            constantResistance;
+            R               R [-1 0 3 1 0] 0.1;
+            zones           ( gap1 );
+        }
+    );
+
+    sources
+    (
+        chip0 // chip 0
+        {
+            type            constant;
+            S               S [1 0 -3 0 0] 1e6;
+            zones           ( chip0 );
+        }
+
+        chip1 // chip 1
+        {
+            type            constant;
+            S               S [1 0 -3 0 0] 1e6;
+            zones           ( chip1 );
+        }
+    );
+}
+
+// ************************************************************************* //

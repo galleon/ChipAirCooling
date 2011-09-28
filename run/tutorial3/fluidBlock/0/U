@@ -1,0 +1,63 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM Extend Project: Open Source CFD        |
+|  \\    /   O peration     | Version:  1.6-ext                               |
+|   \\  /    A nd           | Web:      www.extend-project.de                 |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volVectorField;
+    object      U;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 1 -1 0 0 0 0];
+
+internalField   uniform (0 5 0);
+
+boundaryField
+{
+    fluidInlet
+    {
+        type            controlledParabolicVelocity;
+        Umean           5;
+        n               (0 1 0);
+        y               (1 0 0);
+
+        obsFieldName    T;
+        obsPatchName    fluidOutlet;
+        target          290;
+        gain            1e-6;
+
+        value           uniform (0 5 0);
+    }
+
+    fluidOutlet
+    {
+        type            inletOutlet;
+        inletValue      uniform (0 5 0);
+        value           uniform (0 5 0);
+    }
+
+    fluidCoupledWall
+    {
+        type            fixedValue;
+        value           uniform (0 0 0);
+    }
+
+    fluidSide
+    {
+        type            symmetryPlane;
+    }
+
+    defaultFaces
+    {
+        type            empty;
+    }
+
+}
+
+// ************************************************************************* //

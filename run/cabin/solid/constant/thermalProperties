@@ -1,0 +1,43 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM Extend Project: Open Source CFD        |
+|  \\    /   O peration     | Version:  1.6-ext                               |
+|   \\  /    A nd           | Web:      www.extend-project.de                 |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      thermalProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+thermal
+{
+    type                    multiMaterialZones;
+
+    laws
+    (
+        HLMaterial
+        {
+            type            constant;
+            rho             rho [1 -3 0 0 0] 1400; // read, but not used
+            C               C [0 2 -2 -1 0] 1000; // read, but not used
+            k               k [1 1 -3 -1 0] 0.0026; // conductivity of air is used
+
+            zones           ( HL );
+        }
+    );
+
+    gaps
+    (
+    );
+
+    sources
+    (
+    );
+}
+
+// ************************************************************************* //

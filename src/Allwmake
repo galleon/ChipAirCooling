@@ -1,0 +1,4 @@
+
+wmake libso airbusMaterialModels
+wmake chipAirCoolingSimpleFoam
+wmake chipAirCoolingFoam

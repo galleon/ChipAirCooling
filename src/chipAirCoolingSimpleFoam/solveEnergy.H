@@ -1,0 +1,45 @@
+{
+    // Solid side
+#   include "readSolidControls.H"
+
+    for (int nonOrth = 0; nonOrth <= nNonOrthCorr; nonOrth++)
+    {
+        coupledFvScalarMatrix TEqns(2);
+
+        fvScalarMatrix* TFluidEqn = new fvScalarMatrix
+        (
+            rho*Cp*
+            (
+                fvm::div(phi, T)
+              - fvm::Sp(fvc::div(phi), T)
+            )
+          - fvm::laplacian(kappaEfff, T, "laplacian(kappaEff,T)")
+            ==
+            radiation->Ru()
+          - fvm::Sp(radiation->Rp()*pow3(T), T)
+        );
+
+        TFluidEqn->boundaryManipulate(T.boundaryField());
+        //TFluidEqn->relax(mesh.relaxationFactor("T+T"));
+        TFluidEqn->relax();
+
+        fvScalarMatrix* TSolidEqn = new fvScalarMatrix
+        (
+          - fvm::laplacian(ksolidf, Tsolid, "laplacian(k,T)")
+          + fvm::SuSp(-solidThermo.S()/Tsolid, Tsolid)
+        );
+
+        TSolidEqn->boundaryManipulate(Tsolid.boundaryField());
+        //TSolidEqn->relax(mesh.relaxationFactor("T+T"));
+        TSolidEqn->relax();
+
+
+        // Add fluid equation
+        TEqns.set(0, TFluidEqn);
+
+        // Add solid equation
+        TEqns.set(1, TSolidEqn);
+        Info << "Before T+T solve" << endl;
+        TEqns.solve();
+    }
+}

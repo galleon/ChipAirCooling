@@ -1,0 +1,55 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM Extend Project: Open Source CFD        |
+|  \\    /   O peration     | Version:  1.6-ext                               |
+|   \\  /    A nd           | Web:      www.extend-project.de                 |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    location    "0";
+    object      k;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 2 -2 0 0 0 0];
+
+internalField   uniform 0.03;
+
+boundaryField
+{
+    fluidInlet
+    {
+        type            turbulentIntensityKineticEnergyInlet;
+        value           uniform 0.03;
+        intensity       0.05;
+    }
+
+    fluidOutlet
+    {
+        type            inletOutlet;
+        inletValue      uniform 0.03;
+        value           uniform 0.03;
+    }
+
+    fluidCoupledWall
+    {
+        type            kqRWallFunction;
+        value           uniform 0.03;
+    }
+
+    fluidSide
+    {
+        type            symmetryPlane;
+    }
+
+    defaultFaces
+    {
+        type            empty;
+    }
+}
+
+// ************************************************************************* //

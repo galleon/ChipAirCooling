@@ -1,0 +1,102 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM Extend Project: Open Source CFD        |
+|  \\    /   O peration     | Version:  1.6-ext                               |
+|   \\  /    A nd           | Web:      www.extend-project.de                 |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+solvers
+{
+    p_rgh
+    {
+        solver           PCG;
+        preconditioner   DIC;
+
+        minIter          0;
+        maxIter          1000;
+        tolerance        1e-12;
+        relTol           0.001;
+    };
+
+    U
+    {
+        solver           PBiCG;
+        preconditioner   DILU;
+
+        minIter          1;
+        maxIter          1000;
+        tolerance        1e-12;
+        relTol           0.01;
+    };
+
+    T+T
+    {
+        solver           BiCG;
+        preconditioner   Cholesky;
+
+        minIter          0;
+        maxIter          1000;
+        tolerance        1e-12;
+        relTol           1e-3;
+    };
+
+    G
+    {
+        solver           PCG;
+        preconditioner   DIC;
+
+        minIter          1;
+        maxIter          1000;
+        tolerance        1e-12;
+        relTol           0.1;
+    };
+
+    omega
+    {
+        solver           PBiCG;
+        preconditioner   DILU;
+
+        minIter          1;
+        maxIter          100;
+        tolerance        1e-12;
+        relTol           0.01;
+    };
+
+    k
+    {
+        solver           PBiCG;
+        preconditioner   DILU;
+
+        minIter          1;
+        maxIter          100;
+        tolerance        1e-12;
+        relTol           0.01;
+    };
+}
+
+SIMPLE
+{
+    nNonOrthogonalCorrectors 0;
+    pRefCell        0;
+    pRefValue       0;
+}
+
+relaxationFactors
+{
+    p_rgh           0.6;
+    U               0.2;
+    T               0.5;
+    k               0.5;
+    omega           0.5;
+}
+
+// ************************************************************************* //

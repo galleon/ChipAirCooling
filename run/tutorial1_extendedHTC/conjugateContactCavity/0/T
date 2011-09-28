@@ -1,0 +1,93 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM Extend Project: Open Source CFD        |
+|  \\    /   O peration     | Version:  1.6-ext                               |
+|   \\  /    A nd           | Web:      www.extend-project.de                 |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      T;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 0 0 1 0 0 0];
+
+internalField   uniform 273;
+
+boundaryField
+{
+    movingWall
+    {
+        type            fixedValue;
+        value           uniform 273;
+    }
+
+    left
+    {
+        type            fixedValue;
+        value           uniform 273;
+    }
+
+    right
+    {
+        type            chtRcTemperature;
+        radiation       on;
+        K               kappaEff;
+        remoteField     T;
+        value           uniform 273;
+    }
+
+    bottom
+    {
+        type            extendedWallHeatTransfer;
+
+        Tinf            293;
+        hc              20;
+        alpha           1;
+
+        radiationSources
+        (
+            source1
+            {
+                type            viewFactor;
+
+                Tinf            350;
+                epsilon         0.5;
+                F               uniform 0.01;
+            }
+            source2
+            {
+                type            viewFactor;
+
+                Tinf            350;
+                epsilon         0.7;
+                F               uniform 0.15;
+            }
+            source3
+            {
+                type            constantFlux;
+                q               uniform -100;
+            }
+            source4
+            {
+                type            pointSource;
+                qmax            -100;
+                alpha           0.5;
+                direction       (0 1 0);
+            }
+        );
+
+        value           uniform 273;
+    }
+
+    frontAndBack
+    {
+        type            empty;
+    }
+}
+
+// ************************************************************************* //
