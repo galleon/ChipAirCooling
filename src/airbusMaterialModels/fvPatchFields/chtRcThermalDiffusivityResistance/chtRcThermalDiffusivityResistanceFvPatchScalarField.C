@@ -266,7 +266,7 @@ chtRcThermalDiffusivityResistanceFvPatchScalarField::calcTemperature
     //scalarField q2 = (TcNei - TcOwn)*ownerK*p.deltaCoeffs();
     //Info << "q2 = " << q2 << " Sum = " << sum(q2*p.magSf()) << endl;
 
-    owner.fvPatchField::updateCoeffs();
+    owner.fvPatchScalarField::updateCoeffs();
 }
 
 

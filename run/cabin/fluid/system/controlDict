@@ -55,7 +55,7 @@ functions
 
         lib "libairbusMaterialModels.so";
 
-        K              kappaEfff;
+        K              kappaEff;
     }
 
     heatFlux
@@ -68,7 +68,7 @@ functions
 
         lib "libairbusMaterialModels.so";
 
-        K              ksolidf;
+        K              k;
     }
 );
 

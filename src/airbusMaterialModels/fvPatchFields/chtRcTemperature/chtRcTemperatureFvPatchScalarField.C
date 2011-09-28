@@ -105,7 +105,7 @@ chtRcTemperatureFvPatchScalarField::shadowPatchField() const
         const chtRcTemperatureFvPatchScalarField&
     >
     (
-        regionCoupleFvPatchField::shadowPatchField()
+        regionCoupleFvPatchScalarField::shadowPatchField()
     );
 }
 
@@ -142,8 +142,8 @@ void chtRcTemperatureFvPatchScalarField::manipulateMatrix
     const scalarField TcNei = patchNeighbourField();
     const scalarField& Tw = *this;
 
-    const regionCoupleFvPatchField& K =
-        dynamic_cast<const regionCoupleFvPatchField&>
+    const regionCoupleFvPatchScalarField& K =
+        dynamic_cast<const regionCoupleFvPatchScalarField&>
         (
             p.lookupPatchField<volScalarField, scalar>(kName_)
         );

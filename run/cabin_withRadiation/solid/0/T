@@ -22,8 +22,20 @@ boundaryField
 {
     topExtWall
     {
-        type            fixedValue;
-        value           uniform 340;
+        type            extendedWallHeatTransfer;
+
+        K               k;
+        radiation       on;
+
+        Tinf            250;
+        hc              2;
+        alpha           50;
+
+        radiationSources
+        (
+        );
+
+        value           uniform 293;
     }
 
     "toF.*"

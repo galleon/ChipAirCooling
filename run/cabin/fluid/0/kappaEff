@@ -34,17 +34,15 @@ boundaryField
 
     cabHeatTransmissiveWall
     {
-	type            zeroGradient;
-        //type            chtRcThermalDiffusivity;
-        conductivity    uniform 50;
+        type            chtRcThermalDiffusivityResistance;
+        conductivity    uniform 5;
         remoteField     kappaEff;
         value           uniform 1e-3;
     }
 
     bayHeatTransmissiveWall
     {
-	type            zeroGradient;
-        //type            chtRcThermalDiffusivitySlave;
+        type            chtRcThermalDiffusivitySlave;
         remoteField     kappaEff;
         value           uniform 1e-3;
     }

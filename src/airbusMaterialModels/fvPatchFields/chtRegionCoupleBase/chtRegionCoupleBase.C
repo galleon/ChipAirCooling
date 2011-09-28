@@ -92,7 +92,7 @@ chtRegionCoupleBase::shadowPatchField() const
 {
     return dynamic_cast<const chtRegionCoupleBase&>
     (
-        regionCoupleFvPatchField::shadowPatchField()
+        regionCoupleFvPatchScalarField::shadowPatchField()
     );
 }
 

@@ -41,7 +41,9 @@ Foam::extendedWallHeatTransferFvPatchScalarField::extendedWallHeatTransferFvPatc
     mixedFvPatchScalarField(p, iF),
     Tinf_(0.0),
     hc_(0.0),
-    alpha_(0.0)
+    alpha_(0.0),
+    KName_("undefined-K"),
+    radiation_(false)
 {}
 
 
@@ -57,7 +59,9 @@ Foam::extendedWallHeatTransferFvPatchScalarField::extendedWallHeatTransferFvPatc
     Tinf_(ptf.Tinf_),
     hc_(ptf.hc_),
     alpha_(ptf.alpha_),
-    radSources_(ptf.radSources_)
+    radSources_(ptf.radSources_),
+    KName_(ptf.KName_),
+    radiation_(ptf.radiation_)
 {}
 
 
@@ -71,7 +75,9 @@ Foam::extendedWallHeatTransferFvPatchScalarField::extendedWallHeatTransferFvPatc
     mixedFvPatchScalarField(p, iF),
     Tinf_(readScalar(dict.lookup("Tinf"))),
     hc_(readScalar(dict.lookup("hc"))),
-    alpha_(readScalar(dict.lookup("alpha")))
+    alpha_(readScalar(dict.lookup("alpha"))),
+    KName_(dict.lookup("K")),
+    radiation_(readBool(dict.lookup("radiation")))
 {
     refValue() = Tinf_;
     refGrad() = 0.0;
@@ -111,7 +117,9 @@ Foam::extendedWallHeatTransferFvPatchScalarField::extendedWallHeatTransferFvPatc
     Tinf_(tppsf.Tinf_),
     hc_(tppsf.hc_),
     alpha_(tppsf.alpha_),
-    radSources_(tppsf.radSources_)
+    radSources_(tppsf.radSources_),
+    KName_(tppsf.KName_),
+    radiation_(tppsf.radiation_)
 {}
 
 
@@ -125,7 +133,9 @@ Foam::extendedWallHeatTransferFvPatchScalarField::extendedWallHeatTransferFvPatc
     Tinf_(tppsf.Tinf_),
     hc_(tppsf.hc_),
     alpha_(tppsf.alpha_),
-    radSources_(tppsf.radSources_)
+    radSources_(tppsf.radSources_),
+    KName_(tppsf.KName_),
+    radiation_(tppsf.radiation_)
 {}
 
 
@@ -144,12 +154,16 @@ void Foam::extendedWallHeatTransferFvPatchScalarField::updateCoeffs()
     const scalarField& Tb = *this;
 
     const scalarField& kappaEff =
-        p.lookupPatchField<volScalarField, scalar>("kappaEff");
+        p.lookupPatchField<volScalarField, scalar>(KName_);
 
     scalarField term = kappaEff*patch().deltaCoeffs();
 
-    const scalarField& Qri =
-        p.lookupPatchField<volScalarField, scalar>("Qr");
+    scalarField Qri(p.size(), 0);
+    if (radiation())
+    {
+        Qri = p.lookupPatchField<volScalarField, scalar>("Qr");
+    }
+
     scalarField Qrio = 4.0*radiation::sigmaSB.value()*pow4(Tb);
 
     scalarField Two = Tb - (term*(patchInternalField() - Tb) + Qri)/hc_;
@@ -183,6 +197,7 @@ void Foam::extendedWallHeatTransferFvPatchScalarField::updateCoeffs()
 void Foam::extendedWallHeatTransferFvPatchScalarField::write(Ostream& os) const
 {
     fvPatchScalarField::write(os);
+    os.writeKeyword("K") << KName_ << token::END_STATEMENT << nl;
     os.writeKeyword("Tinf") << Tinf_ << token::END_STATEMENT << nl;
     os.writeKeyword("hc") << hc_ << token::END_STATEMENT << nl;
     os.writeKeyword("alpha") << alpha_ << token::END_STATEMENT << nl;

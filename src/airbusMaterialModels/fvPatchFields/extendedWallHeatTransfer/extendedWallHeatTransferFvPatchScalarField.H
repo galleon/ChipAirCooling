@@ -78,6 +78,12 @@ class extendedWallHeatTransferFvPatchScalarField
         //- list of radiative sources
         PtrList<externalRadiationSource> radSources_;
 
+        //- Name of thermal conductivity field
+        word KName_;
+
+        //- Take radiation into account for this patch
+        bool radiation_;
+
 
 public:
 
@@ -150,6 +156,12 @@ public:
     // Member functions
 
         // Access
+
+            //- Return radiation
+            bool radiation() const
+            {
+                return radiation_;
+            }
 
         // Mapping functions
 

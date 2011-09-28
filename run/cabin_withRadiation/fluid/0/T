@@ -26356,8 +26356,19 @@ boundaryField
     }
     topExtWall
     {
-        type            adiabatic;
+        type            extendedWallHeatTransfer;
+
         K               kappaEff;
+        radiation       on;
+
+        Tinf            250;
+        hc              2;
+        alpha           50;
+
+        radiationSources
+        (
+        );
+
         value           uniform 293;
     }
     toSolidR
@@ -26391,14 +26402,24 @@ boundaryField
     }
     bottomExtWall
     {
-        type            adiabatic;
+        type            extendedWallHeatTransfer;
+
         K               kappaEff;
+        radiation       on;
+
+        Tinf            250;
+        hc              2;
+        alpha           50;
+
+        radiationSources
+        (
+        );
+
         value           uniform 293;
     }
     core2
     {
         type            solidWallHeatFluxTemperature;
-        gradient        uniform 0;
         q               uniform 161.29;
         K               kappaEff;
         value           uniform 293;
@@ -26406,7 +26427,6 @@ boundaryField
     core1
     {
         type            solidWallHeatFluxTemperature;
-        gradient        uniform 0;
         q               uniform 161.29;
         K               kappaEff;
         value           uniform 293;

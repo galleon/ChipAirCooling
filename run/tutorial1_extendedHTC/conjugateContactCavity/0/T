@@ -45,6 +45,9 @@ boundaryField
     {
         type            extendedWallHeatTransfer;
 
+        K               kappaEff;
+        radiation       on;
+
         Tinf            293;
         hc              20;
         alpha           1;

@@ -90,7 +90,7 @@ chtRcThermalDiffusivitySlaveFvPatchScalarField::shadowPatchField() const
 {
     return dynamic_cast<const chtRegionCoupleBase&>
     (
-        regionCoupleFvPatchField::shadowPatchField()
+        regionCoupleFvPatchScalarField::shadowPatchField()
     );
 }
 
@@ -104,7 +104,7 @@ void chtRcThermalDiffusivitySlaveFvPatchScalarField::updateCoeffs()
 
     shadowPatchField().calcThermalDiffusivity(*this, shadowPatchField());
 
-    fvPatchField::updateCoeffs();
+    fvPatchScalarField::updateCoeffs();
 }
 
 

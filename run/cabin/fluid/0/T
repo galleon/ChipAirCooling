@@ -26334,8 +26334,7 @@ boundaryField
 {
     cabHeatTransmissiveWall
     {
-        type            zeroGradient;
-        //type            chtRcTemperature;
+        type            chtRcTemperature;
         radiation       off;
         remoteField     T;
         K               kappaEff;
@@ -26343,8 +26342,7 @@ boundaryField
     }
     bayHeatTransmissiveWall
     {
-        type            zeroGradient;
-        //type            chtRcTemperature;
+        type            chtRcTemperature;
         radiation       off;
         remoteField     T;
         K               kappaEff;
@@ -26358,8 +26356,19 @@ boundaryField
     }
     topExtWall
     {
-        type            zeroGradient;
+        type            extendedWallHeatTransfer;
+
         K               kappaEff;
+        radiation       off;
+
+        Tinf            250;
+        hc              2;
+        alpha           50;
+
+        radiationSources
+        (
+        );
+
         value           uniform 293;
     }
     toSolidR
@@ -26393,14 +26402,24 @@ boundaryField
     }
     bottomExtWall
     {
-        type            zeroGradient;
+        type            extendedWallHeatTransfer;
+
         K               kappaEff;
+        radiation       off;
+
+        Tinf            250;
+        hc              2;
+        alpha           50;
+
+        radiationSources
+        (
+        );
+
         value           uniform 293;
     }
     core2
     {
         type            solidWallHeatFluxTemperature;
-        gradient        uniform 0;
         q               uniform 161.29;
         K               kappaEff;
         value           uniform 293;
@@ -26408,7 +26427,6 @@ boundaryField
     core1
     {
         type            solidWallHeatFluxTemperature;
-        gradient        uniform 0;
         q               uniform 161.29;
         K               kappaEff;
         value           uniform 293;
