@@ -4,7 +4,7 @@
     (
         fvm::div(phi, U)
       + turbulence->divDevReff(U)
-      - fvc::div(phi)*U
+      + fvm::SuSp(-fvc::div(phi), U)
     );
 
     UEqn().relax();

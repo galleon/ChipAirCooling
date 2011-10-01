@@ -11,7 +11,7 @@
             rho*Cp*
             (
                 fvm::div(phi, T)
-              - fvm::Sp(fvc::div(phi), T)
+              + fvm::Sp(-fvc::div(phi), T)
             )
           - fvm::laplacian(kappaEfff, T, "laplacian(kappaEff,T)")
             ==
