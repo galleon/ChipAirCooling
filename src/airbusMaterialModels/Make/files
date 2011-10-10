@@ -42,4 +42,4 @@ fvPatchFields/adiabatic/adiabaticFvPatchScalarField.C
 functionObjects/heatFlux/heatFlux/heatFlux.C
 functionObjects/heatFlux/heatFluxFunctionObject/heatFluxFunctionObject.C
 
-LIB = $(FOAM_USER_LIBBIN)/libairbusMaterialModels
+LIB = $(FOAM_LIBBIN)/libairbusMaterialModels

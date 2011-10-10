@@ -1,5 +1,5 @@
 EXE_INC = \
-    -I../airbusMaterialModels/lnInclude \
+    -I$(LIB_SRC)/airbusMaterialModels/lnInclude \
     -I$(LIB_SRC)/turbulenceModels \
     -I$(LIB_SRC)/turbulenceModels/incompressible/RAS/RASModel \
     -I$(LIB_SRC)/turbulenceModels/incompressible/turbulenceModel \
@@ -19,4 +19,4 @@ EXE_LIBS = \
     -lbasicThermophysicalModels \
     -lspecie \
     -lradiation \
-    -L$(FOAM_USER_LIBBIN) -lairbusMaterialModels
+    -lairbusMaterialModels

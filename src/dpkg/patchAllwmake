@@ -1,0 +1,11 @@
+diff --git a/src/Allwmake b/src/Allwmake
+index 6fe5e2b..102fddd 100755
+--- a/src/Allwmake
++++ b/src/Allwmake
+@@ -65,5 +65,6 @@ wmake libso errorEstimation
+ fvAgglomerationMethods/Allwmake
+ 
+ wmake libso engine
++wmake libso airbusMaterialModels
+ 
+ # ----------------------------------------------------------------- end-of-file
