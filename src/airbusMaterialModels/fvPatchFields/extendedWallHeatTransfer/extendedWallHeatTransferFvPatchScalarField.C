@@ -198,6 +198,7 @@ void Foam::extendedWallHeatTransferFvPatchScalarField::write(Ostream& os) const
 {
     fvPatchScalarField::write(os);
     os.writeKeyword("K") << KName_ << token::END_STATEMENT << nl;
+    os.writeKeyword("radiation") << radiation_ << token::END_STATEMENT << nl;
     os.writeKeyword("Tinf") << Tinf_ << token::END_STATEMENT << nl;
     os.writeKeyword("hc") << hc_ << token::END_STATEMENT << nl;
     os.writeKeyword("alpha") << alpha_ << token::END_STATEMENT << nl;

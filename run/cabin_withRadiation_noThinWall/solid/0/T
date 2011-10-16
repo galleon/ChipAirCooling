@@ -1,0 +1,57 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM Extend Project: Open Source CFD        |
+|  \\    /   O peration     | Version:  1.6-ext                               |
+|   \\  /    A nd           | Web:      www.extend-project.de                 |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      T;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 0 0 1 0 0 0];
+
+internalField   uniform 284;
+
+boundaryField
+{
+    topExtWall
+    {
+        type            extendedWallHeatTransfer;
+
+        K               k;
+        radiation       off;
+
+        Tinf            250;
+        hc              2;
+        alpha           50;
+
+        radiationSources
+        (
+        );
+
+        value           uniform 293;
+    }
+
+    "toF.*"
+    {
+        type            chtRcTemperature;
+        radiation       off;
+        remoteField     T;
+        K               k;
+
+        value           uniform 293;
+    }
+
+    defaultFaces
+    {
+        type            empty;
+    }
+}
+
+// ************************************************************************* //
