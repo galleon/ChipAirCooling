@@ -56,7 +56,7 @@ functions
         // Where to load it from (if not already in solver)
         functionObjectLibs ("libairbusMaterialModels.so");
 
-        K              kappaEfff;
+        K              kappaEff;
     }
 
     heatFlux
@@ -70,7 +70,7 @@ functions
         // Where to load it from (if not already in solver)
         functionObjectLibs ("libairbusMaterialModels.so");
 
-        K              ksolidf;
+        K              k;
     }
 );
 
