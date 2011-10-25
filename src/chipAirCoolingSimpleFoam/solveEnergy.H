@@ -13,24 +13,23 @@
                 fvm::div(phi, T)
               + fvm::Sp(-fvc::div(phi), T)
             )
-          - fvm::laplacian(kappaEfff, T, "laplacian(kappaEff,T)")
+          - fvm::laplacian(kappaEff, T, "laplacian(kappaEff,T)")
             ==
             radiation->Ru()
-          - fvm::Sp(radiation->Rp()*pow3(T), T)
+          - fvm::Sp(4.0*radiation->Rp()*pow3(T), T)
+          + 3.0*radiation->Rp()*pow4(T)
         );
 
         TFluidEqn->boundaryManipulate(T.boundaryField());
-        //TFluidEqn->relax(mesh.relaxationFactor("T+T"));
         TFluidEqn->relax();
 
         fvScalarMatrix* TSolidEqn = new fvScalarMatrix
         (
-          - fvm::laplacian(ksolidf, Tsolid, "laplacian(k,T)")
+          - fvm::laplacian(ksolid, Tsolid, "laplacian(k,T)")
           + fvm::SuSp(-solidThermo.S()/Tsolid, Tsolid)
         );
 
         TSolidEqn->boundaryManipulate(Tsolid.boundaryField());
-        //TSolidEqn->relax(mesh.relaxationFactor("T+T"));
         TSolidEqn->relax();
 
 
@@ -39,7 +38,7 @@
 
         // Add solid equation
         TEqns.set(1, TSolidEqn);
-        Info << "Before T+T solve" << endl;
+
         TEqns.solve();
     }
 }

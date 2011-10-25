@@ -127,16 +127,10 @@ void chtRcTemperatureFvPatchScalarField::updateCoeffs()
 }
 
 
-void chtRcTemperatureFvPatchScalarField::manipulateMatrix
-(
-    fvScalarMatrix& matrix
-)
+tmp<scalarField> chtRcTemperatureFvPatchScalarField::source() const
 {
     const fvPatch& p = patch();
     const magLongDelta& mld = magLongDelta::New(p.boundaryMesh().mesh());
-    const scalarField& magSf = p.magSf();
-    const labelList& cellLabels = p.faceCells();
-    scalarField& source = matrix.source();
 
     const scalarField TcOwn = patchInternalField();
     const scalarField TcNei = patchNeighbourField();
@@ -153,14 +147,24 @@ void chtRcTemperatureFvPatchScalarField::manipulateMatrix
     const scalarField kOwn =
         K.originalPatchField()/(1 - p.weights())/mld.magDelta(p.index());
 
-    scalarField s = kOwn*(Tw - TcOwn) - k*(TcNei - TcOwn);
+    return kOwn*(Tw - TcOwn) - k*(TcNei - TcOwn);
+}
 
-    //if(radiation_)
-    //{
-    //    s -= p.lookupPatchField<volScalarField, scalar>("Qr");
-    //}
+
+void chtRcTemperatureFvPatchScalarField::manipulateMatrix
+(
+    fvScalarMatrix& matrix
+)
+{
+    const fvPatch& p = patch();
+    const scalarField& magSf = p.magSf();
+    const labelList& cellLabels = p.faceCells();
+    scalarField& source = matrix.source();
+
+    scalarField s = this->source();
 
     //Info << "s = " << s << " Sum s = " << sum(s*p.magSf()) << endl;
+    //Info << "Sum s = " << sum(s*p.magSf()) << endl;
 
     forAll(cellLabels, i)
     {

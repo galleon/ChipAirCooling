@@ -27,7 +27,7 @@ License
 #include "volFields.H"
 #include "surfaceFields.H"
 #include "fvc.H"
-#include "regionCoupleFvPatchFields.H"
+#include "chtRcTemperatureFvPatchScalarField.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -124,8 +124,23 @@ void Foam::heatFlux::execute()
             scalar conduction = sum
             (
                 mesh.magSf().boundaryField()[patchi]
-                *heatFluxD.boundaryField()[patchi]
+               *heatFluxD.boundaryField()[patchi]
             );
+
+            // Account for heat sources at region couple BCs
+            if(isA<chtRcTemperatureFvPatchScalarField>(T.boundaryField()[patchi]))
+            {
+                const chtRcTemperatureFvPatchScalarField& pT =
+                    dynamic_cast<const chtRcTemperatureFvPatchScalarField&>
+                    (
+                        T.boundaryField()[patchi]
+                    );
+
+                conduction -= sum
+                (
+                    pT.source()*mesh.magSf().boundaryField()[patchi]
+                );
+            }
 
             scalar convection = 0.0;
             scalar radiation = 0.0;

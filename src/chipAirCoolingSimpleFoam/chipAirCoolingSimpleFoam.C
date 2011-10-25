@@ -56,11 +56,7 @@ int main(int argc, char *argv[])
 
     Info<< "\nStarting time loop\n" << endl;
 
-    // Interpolate to the faces and add thermal resistance
-    surfaceScalarField kappaEfff("kappaEfff", fvc::interpolate(kappaEff));
-    surfaceScalarField ksolidf("ksolidf", fvc::interpolate(ksolid));
-
-    for (runTime++; !runTime.end(); runTime++)
+    while (runTime.loop())
     {
         Info<< "Time = " << runTime.timeName() << nl << endl;
 
@@ -93,50 +89,13 @@ int main(int argc, char *argv[])
         kappaEff.correctBoundaryConditions();
         ksolid.correctBoundaryConditions();
 
-        //scalarField k1Save = kappaEff.boundaryField()[2];
-        //scalarField k2Save = ksolid.boundaryField()[1];
-
         // Interpolate to the faces and add thermal resistance
-        kappaEfff = fvc::interpolate(kappaEff);
-        ksolidf = fvc::interpolate(ksolid);
+        surfaceScalarField ksolidf = fvc::interpolate(ksolid);
         solidThermo.modifyResistance(ksolidf);
-
-
-        //kappaEff.boundaryField()[2] = k1Save;
-        //ksolid.boundaryField()[1] = k2Save;
-
-        /*
-        Info << "k1 = "
-            << (scalarField) kappaEfff.boundaryField()[2] << endl;
-        Info << "k2 = "
-            << (scalarField) ksolidf.boundaryField()[1] << endl;
-        Info << "T1 = "
-            << (scalarField) T.boundaryField()[2].patchInternalField() << endl;
-        Info << "T2 = "
-            << (scalarField) Tsolid.boundaryField()[1].patchInternalField() << endl;
-        Info << "Tw1 = "
-            << (scalarField) T.boundaryField()[2] << endl;
-        Info << "Tw2 = "
-            << (scalarField) Tsolid.boundaryField()[1] << endl;
-            */
 
 #       include "solveEnergy.H"
 
-        /*
-        Info << "k1 = "
-            << (scalarField) kappaEfff.boundaryField()[2] << endl;
-        Info << "k2 = "
-            << (scalarField) ksolidf.boundaryField()[1] << endl;
-        Info << "T1 = "
-            << (scalarField) T.boundaryField()[2].patchInternalField() << endl;
-        Info << "T2 = "
-            << (scalarField) Tsolid.boundaryField()[1].patchInternalField() << endl;
-        Info << "Tw1 = "
-            << (scalarField) T.boundaryField()[2] << endl;
-        Info << "Tw2 = "
-            << (scalarField) Tsolid.boundaryField()[1] << endl;
-            */
-
+/*
         volScalarField Tres =
         (
             "Tres",
@@ -158,6 +117,7 @@ int main(int argc, char *argv[])
 
         Info << "Tres = " << fvc::domainIntegrate(Tres).value() << endl;
         Info << "TsRes = " << fvc::domainIntegrate(TsRes).value() << endl;
+*/
 
         // Update density according to Boussinesq approximation
         rhok = 1.0 - beta*(T - TRef);

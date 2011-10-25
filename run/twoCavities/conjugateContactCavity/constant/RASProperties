@@ -9,49 +9,33 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       volScalarField;
-    object      T;
+    class       dictionary;
+    object      RASProperties;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 0 0 1 0 0 0];
+RASModel            kEpsilon;
 
-internalField   uniform 284;
+turbulence          on;
 
-boundaryField
+printCoeffs         on;
+
+laminarCoeffs
 {
-    topExtWall
-    {
-        type            extendedWallHeatTransfer;
+}
 
-        K               k;
-        radiation       off;
+kEpsilonCoeffs
+{
+    Cmu              0.09;
+    C1               1.44;
+    C2               1.92;
+    alphaEps         0.76923;
+}
 
-        Tinf            250;
-        hc              2;
-        alpha           50;
-
-        radiationSources
-        (
-        );
-
-        value           uniform 293;
-    }
-
-    "toF.*"
-    {
-        type            chtRcTemperature;
-        radiation       off;
-        remoteField     T;
-        K               k;
-
-        value           uniform 293;
-    }
-
-    defaultFaces
-    {
-        type            empty;
-    }
+wallFunctionCoeffs
+{
+    kappa            0.4187;
+    E                9;
 }
 
 // ************************************************************************* //

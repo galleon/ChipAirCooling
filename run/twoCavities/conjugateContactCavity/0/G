@@ -10,45 +10,25 @@ FoamFile
     version     2.0;
     format      ascii;
     class       volScalarField;
-    object      T;
+    object      G;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 0 0 1 0 0 0];
+dimensions      [1 0 -3 0 0 0 0];
 
-internalField   uniform 284;
+internalField   uniform 0;
 
 boundaryField
 {
-    topExtWall
+    ".*"
     {
-        type            extendedWallHeatTransfer;
-
-        K               k;
-        radiation       off;
-
-        Tinf            250;
-        hc              2;
-        alpha           50;
-
-        radiationSources
-        (
-        );
-
-        value           uniform 293;
+        type            MarshakRadiation;
+        T               T;
+        emissivity      1;
+        value           uniform 0;
     }
 
-    "toF.*"
-    {
-        type            chtRcTemperature;
-        radiation       off;
-        remoteField     T;
-        K               k;
-
-        value           uniform 293;
-    }
-
-    defaultFaces
+    frontAndBack
     {
         type            empty;
     }

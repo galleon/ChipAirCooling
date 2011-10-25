@@ -149,9 +149,11 @@ chtRcThermalDiffusivityFvPatchScalarField::calcThermalDiffusivity
     );
 
     scalarField Qr(p.size(), 0.0);
+    scalarField fourQro(p.size(), 0.0);
     if (T.radiation())
     {
         Qr += p.lookupPatchField<volScalarField, scalar>("Qr");
+        fourQro += 4.0*radiation::sigmaSB.value()*pow4(T);
     }
 
     if(T.shadowPatchField().radiation())
@@ -160,7 +162,13 @@ chtRcThermalDiffusivityFvPatchScalarField::calcThermalDiffusivity
         (
             owner.lookupShadowPatchField<volScalarField, scalar>("Qr")
         );
+        fourQro += 4.0*radiation::sigmaSB.value()*pow4
+        (
+            owner.regionCouplePatch().interpolate(T.shadowPatchField())
+        );
     }
+
+    const scalarField kHarm = k;
 
     //Info << "kOwn = " << kOwn << endl;
     //Info << "kNei = " << kNei << endl;
@@ -181,25 +189,17 @@ chtRcThermalDiffusivityFvPatchScalarField::calcThermalDiffusivity
     //scalarField kCorr = kNei*QrOwn - kOwn*QrNei;
     //kCorr /= p.deltaCoeffs()*(kOwn + kNei)*stabilise(TcOwn - TcNei, SMALL);
 
-    scalarField fourQro = 4.0*radiation::sigmaSB.value()*pow4(T);
-    fourQro += 4.0*radiation::sigmaSB.value()*pow4
-    (
-        owner.regionCouplePatch().interpolate(T.shadowPatchField())
-    );
-
     k = T*(fourQro + Qr) - TcOwn*fourQro;
     k /= stabilise(TcNei - TcOwn, SMALL);
     k += T*kNei;
     k *= kOwn;
     k /= p.deltaCoeffs()*(T*(kOwn + kNei) + fourQro);
 
-    //Info << "kCorr = " << kCorr << endl;
+    //Info << "k = " << k << endl;
 
     forAll(k, facei)
     {
-        const scalarField& kOld = owner.originalPatchField();
-
-        k[facei] = max(min(k[facei], 100*kOld[facei]), 0.01*kOld[facei]);
+        k[facei] = max(min(k[facei], 100*kHarm[facei]), 0.01*kHarm[facei]);
     }
 
     //Info << "k = " << k << endl;
@@ -265,7 +265,7 @@ chtRcThermalDiffusivityFvPatchScalarField::calcTemperature
     //Tw = kOwn*TcOwn + kNei*TcNei + Qr;
     //Tw /= kOwn + kNei;
 
-    // Update is prototional to old Tw! Must divide first
+    // Update is proportional to old Tw! Must divide first
     Tw /= Tw*(kOwn + kNei) + fourQro;
     Tw *= fourQro + Qr + kOwn*TcOwn + kNei*TcNei;
 

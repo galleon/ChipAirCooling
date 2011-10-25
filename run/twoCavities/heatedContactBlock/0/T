@@ -16,39 +16,27 @@ FoamFile
 
 dimensions      [0 0 0 1 0 0 0];
 
-internalField   uniform 284;
+internalField   uniform 373;
 
 boundaryField
 {
-    topExtWall
+    topAndBottom
     {
-        type            extendedWallHeatTransfer;
-
-        K               k;
-        radiation       off;
-
-        Tinf            250;
-        hc              2;
-        alpha           50;
-
-        radiationSources
-        (
-        );
-
-        value           uniform 293;
+        type            zeroGradient;
     }
 
-    "toF.*"
+    left
     {
-        type            chtRcTemperature;
-        radiation       off;
-        remoteField     T;
-        K               k;
-
-        value           uniform 293;
+        type            zeroGradient;
     }
 
-    defaultFaces
+    right
+    {
+        type            fixedValue;
+        value           uniform 473;
+    }
+
+    frontAndBack
     {
         type            empty;
     }

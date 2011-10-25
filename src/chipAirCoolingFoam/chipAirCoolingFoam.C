@@ -81,6 +81,8 @@ int main(int argc, char *argv[])
         // Update turbulent quantities
         turbulence->correct();
 
+        radiation->correct();
+
         // Update thermal conductivity in the fluid
         kappaEff = rho*Cp*(turbulence->nu()/Pr + turbulence->nut()/Prt);
 
@@ -93,6 +95,7 @@ int main(int argc, char *argv[])
 
         // Coupled patches
 #       include "attachPatches.H"
+
         kappaEff.correctBoundaryConditions();
         ksolid.correctBoundaryConditions();
 

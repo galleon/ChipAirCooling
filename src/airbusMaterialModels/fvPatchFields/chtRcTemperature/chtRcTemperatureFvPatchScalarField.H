@@ -144,6 +144,9 @@ public:
             //- Evaluate the patch field
             virtual void updateCoeffs();
 
+            //- Calculate source term
+            virtual tmp<scalarField> source() const;
+
             //- Manipulate matrix
             virtual void manipulateMatrix(fvScalarMatrix& matrix);
 

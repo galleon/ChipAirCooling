@@ -9,49 +9,46 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       volScalarField;
-    object      T;
+    class       dictionary;
+    object      fvSchemes;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 0 0 1 0 0 0];
-
-internalField   uniform 284;
-
-boundaryField
+ddtSchemes
 {
-    topExtWall
-    {
-        type            extendedWallHeatTransfer;
+    default steadyState;
+}
 
-        K               k;
-        radiation       off;
+gradSchemes
+{
+    default         Gauss linear;
+}
 
-        Tinf            250;
-        hc              2;
-        alpha           50;
+divSchemes
+{
+    default         none;
+}
 
-        radiationSources
-        (
-        );
+laplacianSchemes
+{
+    default         none;
+    laplacian(k,T)  Gauss harmonic uncorrected;
+}
 
-        value           uniform 293;
-    }
+interpolationSchemes
+{
+    default         linear;
+    interpolate(k)  harmonic;
+}
 
-    "toF.*"
-    {
-        type            chtRcTemperature;
-        radiation       off;
-        remoteField     T;
-        K               k;
+snGradSchemes
+{
+    default         uncorrected;
+}
 
-        value           uniform 293;
-    }
-
-    defaultFaces
-    {
-        type            empty;
-    }
+fluxRequired
+{
+    default         no;
 }
 
 // ************************************************************************* //

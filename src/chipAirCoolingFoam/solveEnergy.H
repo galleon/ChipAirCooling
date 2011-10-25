@@ -6,7 +6,7 @@
     {
         coupledFvScalarMatrix TEqns(2);
 
-        fvScalarMatrix* TFluid = new fvScalarMatrix
+        fvScalarMatrix* TFluidEqn = new fvScalarMatrix
         (
             rho*Cp*
             (
@@ -16,30 +16,28 @@
           - fvm::laplacian(kappaEff, T)
             ==
             radiation->Ru()
-          - fvm::Sp(radiation->Rp()*pow3(T), T)
+          - fvm::Sp(4.0*radiation->Rp()*pow3(T), T)
+          + 3.0*radiation->Rp()*pow4(T)
         );
 
-        TFluid->boundaryManipulate(T.boundaryField());
-        TFluid->relax(mesh.relaxationFactor("T+T"));
+        TFluidEqn->boundaryManipulate(T.boundaryField());
 
-        fvScalarMatrix* TSolid = new fvScalarMatrix
+        fvScalarMatrix* TSolidEqn = new fvScalarMatrix
         (
             fvm::ddt(rhoCpsolid, Tsolid)
           - fvm::laplacian(ksolidf, Tsolid, "laplacian(k,T)")
           + fvm::SuSp(-solidThermo.S()/Tsolid, Tsolid)
         );
 
-        TSolid->relax(mesh.relaxationFactor("T+T"));
+        TSolidEqn->boundaryManipulate(Tsolid.boundaryField());
 
 
         // Add fluid equation
-        TEqns.set(0, TFluid);
+        TEqns.set(0, TFluidEqn);
 
         // Add solid equation
-        TEqns.set(1, TSolid);
+        TEqns.set(1, TSolidEqn);
 
         TEqns.solve();
     }
-
-    radiation->correct();
 }

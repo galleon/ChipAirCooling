@@ -9,49 +9,58 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       volScalarField;
-    object      T;
+    class       dictionary;
+    object      blockMeshDict;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 0 0 1 0 0 0];
+convertToMeters 0.1;
 
-internalField   uniform 284;
+vertices
+(
+    (1 0 0)
+    (2 0 0)
+    (2 1 0)
+    (1 1 0)
+    (1 0 0.1)
+    (2 0 0.1)
+    (2 1 0.1)
+    (1 1 0.1)
+);
 
-boundaryField
-{
-    topExtWall
-    {
-        type            extendedWallHeatTransfer;
+blocks
+(
+    hex (0 1 2 3 4 5 6 7) (10 10 1) simpleGrading (1 1 1)
+);
 
-        K               k;
-        radiation       off;
+edges
+(
+);
 
-        Tinf            250;
-        hc              2;
-        alpha           50;
+patches
+(
+    patch topAndBottom
+    (
+        (3 7 6 2)
+        (1 5 4 0)
+    )
+    patch left
+    (
+        (0 4 7 3)
+    )
+    patch right
+    (
+        (2 6 5 1)
+    )
+    empty frontAndBack
+    (
+        (0 3 2 1)
+        (4 5 6 7)
+    )
+);
 
-        radiationSources
-        (
-        );
-
-        value           uniform 293;
-    }
-
-    "toF.*"
-    {
-        type            chtRcTemperature;
-        radiation       off;
-        remoteField     T;
-        K               k;
-
-        value           uniform 293;
-    }
-
-    defaultFaces
-    {
-        type            empty;
-    }
-}
+mergePatchPairs
+(
+);
 
 // ************************************************************************* //

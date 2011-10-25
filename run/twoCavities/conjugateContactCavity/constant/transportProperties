@@ -9,49 +9,25 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       volScalarField;
-    object      T;
+    class       dictionary;
+    object      transportProperties;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 0 0 1 0 0 0];
+transportModel  Newtonian;
 
-internalField   uniform 284;
+TRef            TRef [0 0 0 1 0 0 0] 273.0;
 
-boundaryField
-{
-    topExtWall
-    {
-        type            extendedWallHeatTransfer;
+nu              nu [0 2 -1 0 0 0 0] 1.78e-5;
 
-        K               k;
-        radiation       off;
+rho             rho [1 -3 0 0 0 0 0] 1.2;
 
-        Tinf            250;
-        hc              2;
-        alpha           50;
+Cp              Cp [0 2 -2 -1 0 0 0] 1000;
 
-        radiationSources
-        (
-        );
+beta            beta [0 0 0 -1 0 0 0] 1e-3;
 
-        value           uniform 293;
-    }
+Prt             Prt [0 0 0 0 0 0 0] 0.85;
 
-    "toF.*"
-    {
-        type            chtRcTemperature;
-        radiation       off;
-        remoteField     T;
-        K               k;
-
-        value           uniform 293;
-    }
-
-    defaultFaces
-    {
-        type            empty;
-    }
-}
+Pr              Pr [0 0 0 0 0 0 0] 0.71; // nu/a = 1.78e-5/0.03*1000*1.2
 
 // ************************************************************************* //

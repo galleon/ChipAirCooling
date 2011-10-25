@@ -16,13 +16,13 @@ FoamFile
 
 application     icoFoam;
 
-startFrom       latestTime;
+startFrom       startTime;
 
 startTime       0;
 
 stopAt          endTime;
 
-endTime         20000;
+endTime         1000;
 
 deltaT          1;
 
@@ -53,7 +53,8 @@ functions
         outputControl timeStep;
         outputInterval 1;
 
-        lib "libairbusMaterialModels.so";
+        // Where to load it from (if not already in solver)
+        functionObjectLibs ("libairbusMaterialModels.so");
 
         K              kappaEff;
     }
@@ -64,9 +65,10 @@ functions
         type heatFlux;
         outputControl timeStep;
         outputInterval 1;
-	    region solid;
+        region solid;
 
-        lib "libairbusMaterialModels.so";
+        // Where to load it from (if not already in solver)
+        functionObjectLibs ("libairbusMaterialModels.so");
 
         K              k;
     }
