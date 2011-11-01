@@ -12,12 +12,16 @@
         )
     );
 
-    Info<< "Reading field p\n" << endl;
-    volScalarField p
+    Info<< "Calculating field g.h\n" << endl;
+    volScalarField gh("gh", g & mesh.C());
+    surfaceScalarField ghf("ghf", g & mesh.Cf());
+
+    Info<< "Reading field p_rgh\n" << endl;
+    volScalarField p_rgh
     (
         IOobject
         (
-            "p",
+            "p_rgh",
             runTime.timeName(),
             mesh,
             IOobject::MUST_READ,
@@ -62,7 +66,7 @@
     scalar pRefValue = 0.0;
     setRefCell
     (
-        p,
+        p_rgh,
         mesh.solutionDict().subDict("PISO"),
         pRefCell,
         pRefValue
@@ -75,7 +79,7 @@
 
 #   include "attachPatches.H"
 
-    Info<< "Reading field alphaEff\n" << endl;
+    Info<< "Reading field kappaEff\n" << endl;
     volScalarField kappaEff
     (
         IOobject

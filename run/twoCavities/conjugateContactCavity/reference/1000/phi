@@ -388,17 +388,17 @@ boundaryField
     movingWall
     {
         type            calculated;
-        value           nonuniform List<scalar> 10(0 1.69407e-21 -1.69407e-21 -8.47033e-22 -8.47033e-22 0 8.47033e-22 0 -4.23516e-22 -8.47033e-22);
+        value           nonuniform List<scalar> 10(0 3.38813e-21 0 0 8.47033e-22 0 0 8.47033e-22 4.23516e-22 0);
     }
     left
     {
         type            calculated;
-        value           nonuniform List<scalar> 10(0 0 -8.47033e-22 0 0 0 0 0 -3.38813e-21 0);
+        value           nonuniform List<scalar> 10(0 0 0 -8.47033e-22 1.69407e-21 1.69407e-21 3.38813e-21 6.77626e-21 0 0);
     }
     right
     {
         type            calculated;
-        value           nonuniform List<scalar> 10(-2.11758e-22 0 4.23516e-22 2.11758e-22 0 2.11758e-22 2.11758e-22 0 -4.23516e-22 0);
+        value           nonuniform List<scalar> 10(-2.11758e-22 4.23516e-22 4.23516e-22 0 -2.11758e-22 2.11758e-22 2.11758e-22 0 0 -4.23516e-22);
     }
     bottom
     {
@@ -408,17 +408,17 @@ boundaryField
     movingWall2
     {
         type            calculated;
-        value           nonuniform List<scalar> 10(0 0 0 0 0 3.30872e-24 6.61744e-24 0 -6.61744e-24 -2.64698e-23);
+        value           nonuniform List<scalar> 10(-2.11758e-22 2.64698e-23 0 0 0 -3.30872e-24 0 0 6.61744e-24 -2.64698e-23);
     }
     left2
     {
         type            calculated;
-        value           nonuniform List<scalar> 10(0 1.05879e-22 -2.11758e-22 0 0 0 4.23516e-22 4.23516e-22 0 0);
+        value           nonuniform List<scalar> 10(0 -1.05879e-22 -2.11758e-22 -2.11758e-22 -2.11758e-22 -4.23516e-22 0 0 4.23516e-22 0);
     }
     right2
     {
         type            calculated;
-        value           nonuniform List<scalar> 10(0 5.29396e-23 5.29396e-23 0 0 0 0 0 2.11758e-22 0);
+        value           nonuniform List<scalar> 10(0 5.29396e-23 -5.29396e-23 0 0 0 2.11758e-22 2.11758e-22 -2.11758e-22 0);
     }
     bottom2
     {

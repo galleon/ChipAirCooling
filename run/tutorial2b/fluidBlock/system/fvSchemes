@@ -22,7 +22,7 @@ ddtSchemes
 gradSchemes
 {
     default         Gauss linear;
-    grad(p)         Gauss linear;
+    grad(p_rgh)     Gauss linear;
     grad(U)         Gauss linear;
 }
 
@@ -39,8 +39,8 @@ divSchemes
 laplacianSchemes
 {
     default         none;
-    laplacian((1|A(U)),p) Gauss linear corrected;
-    laplacian(kappaEff,T)     Gauss harmonic corrected;
+    laplacian((1|A(U)),p_rgh) Gauss linear corrected;
+    laplacian(kappaEff,T)     Gauss linear corrected;
     laplacian(gammaRad,G)     Gauss linear corrected;
     laplacian(DkEff,k) Gauss linear corrected;
     laplacian(DepsilonEff,epsilon) Gauss linear corrected;
@@ -51,7 +51,7 @@ interpolationSchemes
 {
     default                linear;
 
-    interpolate(kappaEff)  harmonic;
+    interpolate(kappaEff)  linear;
 }
 
 snGradSchemes
@@ -62,7 +62,7 @@ snGradSchemes
 fluxRequired
 {
     default         no;
-    p;
+    p_rgh;
 }
 
 // ************************************************************************* //

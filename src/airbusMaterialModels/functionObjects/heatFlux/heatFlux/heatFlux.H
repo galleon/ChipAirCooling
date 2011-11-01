@@ -79,6 +79,9 @@ protected:
 
         // Calculation functions
 
+            //- Write
+            virtual void calcAndPrint();
+
         // Functions to be over-ridden from IOoutputFilter class
 
             //- Update mesh

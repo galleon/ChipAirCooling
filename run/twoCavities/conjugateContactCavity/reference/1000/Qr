@@ -44,7 +44,7 @@ boundaryField
     movingWall2
     {
         type            calculated;
-        value           nonuniform List<scalar> 10(10.0765 4.78006 2.00833 0.335343 -0.694137 -1.30034 -1.45102 -1.46468 -1.46911 -4.14178);
+        value           nonuniform List<scalar> 10(10.0765 4.78006 2.00833 0.335345 -0.694135 -1.30034 -1.45102 -1.46468 -1.4691 -4.14178);
     }
     left2
     {

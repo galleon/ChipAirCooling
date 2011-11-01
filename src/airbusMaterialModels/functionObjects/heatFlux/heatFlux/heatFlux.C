@@ -79,6 +79,113 @@ Foam::heatFlux::~heatFlux()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
+void Foam::heatFlux::calcAndPrint()
+{
+    const volScalarField& T = 
+        obr_.lookupObject<volScalarField>("T");
+    const volScalarField& kappaEff = 
+        obr_.lookupObject<volScalarField>(Kfluid_);
+    //const surfaceScalarField& kappaEff = 
+    //    obr_.lookupObject<surfaceScalarField>(Kfluid_);
+
+    scalar rho = 1.2;
+    scalar Cp = 1000;
+
+    const fvMesh& mesh = T.mesh();
+
+    surfaceScalarField heatFluxD =
+        -fvc::interpolate(kappaEff)*fvc::snGrad(T);
+        // -kappaEff*fvc::snGrad(T);
+
+    const surfaceScalarField::GeometricBoundaryField& patchHeatFluxD =
+        heatFluxD.boundaryField();
+    //const surfaceScalarField::GeometricBoundaryField& patchHeatFluxD =
+    //    heatFluxC.boundaryField();
+
+    //surfaceScalarField::GeometricBoundaryField patchHeatFluxC = 
+            
+    scalar sumConduction = 0.0;
+    scalar sumConvection = 0.0;
+    scalar sumRadiation = 0.0;
+
+    Info<< "\nWall heat fluxes [W]" << endl;
+    forAll(patchHeatFluxD, patchi)
+    {
+        scalar conduction = sum
+        (
+            mesh.magSf().boundaryField()[patchi]
+           *heatFluxD.boundaryField()[patchi]
+        );
+
+        // Account for heat sources at region couple BCs
+        if(isA<chtRcTemperatureFvPatchScalarField>(T.boundaryField()[patchi]))
+        {
+            const chtRcTemperatureFvPatchScalarField& pT =
+                dynamic_cast<const chtRcTemperatureFvPatchScalarField&>
+                (
+                    T.boundaryField()[patchi]
+                );
+
+            conduction -= sum
+            (
+                pT.source()*mesh.magSf().boundaryField()[patchi]
+            );
+        }
+
+        scalar convection = 0.0;
+        scalar radiation = 0.0;
+
+        if(obr_.foundObject<surfaceScalarField>("phi"))
+        {
+            const surfaceScalarField& phi = 
+                obr_.lookupObject<surfaceScalarField>("phi");
+
+            convection = sum
+            (
+                 rho*Cp*T.boundaryField()[patchi]
+                *phi.boundaryField()[patchi]
+            );
+        }
+
+        if(obr_.foundObject<volScalarField>("Qr"))
+        {
+            const volScalarField& Qr =
+                obr_.lookupObject<volScalarField>("Qr");
+
+            radiation = sum
+            (
+                 Qr.boundaryField()[patchi]
+                *mesh.magSf().boundaryField()[patchi]
+            );
+        }
+
+        Info<< mesh.boundary()[patchi].name()
+            << " "
+            << conduction
+            << " "
+            << convection
+            << " "
+            << radiation
+            << " "
+            << conduction + convection + radiation
+            << endl;
+
+        sumConduction += conduction;
+        sumConvection += convection;
+        sumRadiation += radiation;
+    }
+
+    Info<< "sum "
+        << sumConduction
+        << " "
+        << sumConvection
+        << " "
+        << sumRadiation
+        << " "
+        << sumConduction + sumConvection + sumRadiation
+        << nl << endl;
+}
+
 void Foam::heatFlux::read(const dictionary& dict)
 {
     if (active_)
@@ -91,115 +198,17 @@ void Foam::heatFlux::execute()
 {
     if (active_)
     {
-        const volScalarField& T = 
-            obr_.lookupObject<volScalarField>("T");
-        const volScalarField& kappaEff = 
-            obr_.lookupObject<volScalarField>(Kfluid_);
-        //const surfaceScalarField& kappaEff = 
-        //    obr_.lookupObject<surfaceScalarField>(Kfluid_);
-
-        scalar rho = 1.2;
-        scalar Cp = 1000;
-
-        const fvMesh& mesh = T.mesh();
-
-        surfaceScalarField heatFluxD =
-            -fvc::interpolate(kappaEff)*fvc::snGrad(T);
-            // -kappaEff*fvc::snGrad(T);
-
-        const surfaceScalarField::GeometricBoundaryField& patchHeatFluxD =
-            heatFluxD.boundaryField();
-        //const surfaceScalarField::GeometricBoundaryField& patchHeatFluxD =
-        //    heatFluxC.boundaryField();
-
-        //surfaceScalarField::GeometricBoundaryField patchHeatFluxC = 
-            
-        scalar sumConduction = 0.0;
-        scalar sumConvection = 0.0;
-        scalar sumRadiation = 0.0;
-
-        Info<< "\nWall heat fluxes [W]" << endl;
-        forAll(patchHeatFluxD, patchi)
-        {
-            scalar conduction = sum
-            (
-                mesh.magSf().boundaryField()[patchi]
-               *heatFluxD.boundaryField()[patchi]
-            );
-
-            // Account for heat sources at region couple BCs
-            if(isA<chtRcTemperatureFvPatchScalarField>(T.boundaryField()[patchi]))
-            {
-                const chtRcTemperatureFvPatchScalarField& pT =
-                    dynamic_cast<const chtRcTemperatureFvPatchScalarField&>
-                    (
-                        T.boundaryField()[patchi]
-                    );
-
-                conduction -= sum
-                (
-                    pT.source()*mesh.magSf().boundaryField()[patchi]
-                );
-            }
-
-            scalar convection = 0.0;
-            scalar radiation = 0.0;
-
-            if(obr_.foundObject<surfaceScalarField>("phi"))
-            {
-                const surfaceScalarField& phi = 
-                    obr_.lookupObject<surfaceScalarField>("phi");
-
-                convection = sum
-                (
-                     rho*Cp*T.boundaryField()[patchi]
-                    *phi.boundaryField()[patchi]
-                );
-            }
-
-            if(obr_.foundObject<volScalarField>("Qr"))
-            {
-                const volScalarField& Qr =
-                    obr_.lookupObject<volScalarField>("Qr");
-
-                radiation = sum
-                (
-                     Qr.boundaryField()[patchi]
-                    *mesh.magSf().boundaryField()[patchi]
-                );
-            }
-
-            Info<< mesh.boundary()[patchi].name()
-                << " "
-                << conduction
-                << " "
-                << convection
-                << " "
-                << radiation
-                << " "
-                << conduction + convection + radiation
-                << endl;
-
-            sumConduction += conduction;
-            sumConvection += convection;
-            sumRadiation += radiation;
-        }
-
-        Info<< "sum "
-            << sumConduction
-            << " "
-            << sumConvection
-            << " "
-            << sumRadiation
-            << " "
-            << sumConduction + sumConvection + sumRadiation
-            << nl << endl;
+        calcAndPrint();
     }
 }
 
 
 void Foam::heatFlux::end()
 {
+    if (active_)
+    {
+        calcAndPrint();
+    }
 }
 
 

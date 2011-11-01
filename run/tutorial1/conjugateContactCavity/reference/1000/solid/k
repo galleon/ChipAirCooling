@@ -29,7 +29,7 @@ boundaryField
     {
         type            chtRcThermalDiffusivitySlave;
         remoteField     kappaEff;
-        value           nonuniform List<scalar> 10(0.339992 0.348988 0.361044 0.380517 0.40391 0.439037 0.521519 0.515451 0.472658 0.435932);
+        value           nonuniform List<scalar> 10(0.300425 0.30243 0.310656 0.325451 0.343807 0.377764 0.400264 0.376734 0.359437 0.343844);
     }
     right
     {

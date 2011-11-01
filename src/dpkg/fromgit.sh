@@ -14,6 +14,9 @@ cp -a ../../../run/* tutorials/heatTransfer/chipAirCoolingFoam
 cp -a ../../*Foam applications/solvers/heatTransfer
 cp -a ../../airbusMaterialModels src
 
+mkdir -p applications/utilities/testLoop
+cp -a ../../checkReference applications/utilities/testLoop
+
 patch -p1 < ../patchAllwmake
 
 git add -A

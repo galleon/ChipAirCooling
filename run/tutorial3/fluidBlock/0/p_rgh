@@ -22,7 +22,8 @@ boundaryField
 {
     fluidInlet
     {
-        type            zeroGradient;
+        type            buoyantPressure;
+        rho             rhok;
     }
 
     fluidOutlet
@@ -46,7 +47,6 @@ boundaryField
     {
         type            empty;
     }
-
 }
 
 // ************************************************************************* //

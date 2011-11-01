@@ -4,38 +4,44 @@
 
     U = rUA*UEqn.H();
 
-    surfaceScalarField phiU
-    (
-        (fvc::interpolate(U) & mesh.Sf())
-      + fvc::ddtPhiCorr(rUA, U, phi)
-    );
+    phi = (fvc::interpolate(U) & mesh.Sf())
+        + fvc::ddtPhiCorr(rUA, U, phi);
 
-    phi = phiU + rUAf*fvc::interpolate(rhok)*(g & mesh.Sf());
+    surfaceScalarField buoyancyPhi(rUAf*ghf*fvc::snGrad(rhok)*mesh.magSf());
+    phi -= buoyancyPhi;
 
     for (int nonOrth=0; nonOrth<=nNonOrthCorr; nonOrth++)
     {
-        fvScalarMatrix pEqn
+        fvScalarMatrix p_rghEqn
         (
-            fvm::laplacian(rUAf, p) == fvc::div(phi)
+            fvm::laplacian(rUAf, p_rgh) == fvc::div(phi)
         );
+
+        p_rghEqn.setReference(pRefCell, pRefValue);
 
         if (corr == nCorr-1 && nonOrth == nNonOrthCorr)
         {
-            pEqn.solve(mesh.solver(p.name() + "Final"));
+            p_rghEqn.solve(mesh.solver(p_rgh.name() + "Final"));
         }
         else
         {
-            pEqn.solve(mesh.solver(p.name()));
+            p_rghEqn.solve(mesh.solver(p_rgh.name()));
         }
 
         if (nonOrth == nNonOrthCorr)
         {
-            phi -= pEqn.flux();
+            // Calculate the conservative fluxes
+            phi -= p_rghEqn.flux();
+
+            // Explicitly relax pressure for momentum corrector
+            p_rgh.relax();
+
+            // Correct the momentum source with the pressure gradient flux
+            // calculated from the relaxed pressure
+            U -= rUA*fvc::reconstruct((buoyancyPhi + p_rghEqn.flux())/rUAf);
+            U.correctBoundaryConditions();
         }
     }
-
-    U += rUA*fvc::reconstruct((phi - phiU)/rUAf);
-    U.correctBoundaryConditions();
 
     #include "continuityErrs.H"
 }

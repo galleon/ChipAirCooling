@@ -73,6 +73,8 @@ int main(int argc, char *argv[])
 
 #       include "UEqn.H"
 
+        p_rgh.storePrevIter();
+
         for (int corr = 0; corr < nCorr; corr++)
         {
 #           include "pEqn.H"

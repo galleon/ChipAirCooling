@@ -11,9 +11,9 @@
             rho*Cp*
             (
                 fvm::div(phi, T)
-              + fvm::Sp(-fvc::div(phi), T)
+              + fvm::SuSp(-fvc::div(phi), T)
             )
-          - fvm::laplacian(kappaEff, T, "laplacian(kappaEff,T)")
+          - fvm::laplacian(kappaEff, T)
             ==
             radiation->Ru()
           - fvm::Sp(4.0*radiation->Rp()*pow3(T), T)
@@ -25,7 +25,7 @@
 
         fvScalarMatrix* TSolidEqn = new fvScalarMatrix
         (
-          - fvm::laplacian(ksolid, Tsolid, "laplacian(k,T)")
+          - fvm::laplacian(ksolidf, Tsolid, "laplacian(k,T)")
           + fvm::SuSp(-solidThermo.S()/Tsolid, Tsolid)
         );
 

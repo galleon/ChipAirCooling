@@ -32,9 +32,9 @@ boundaryField
 
     fluidCoupledWall
     {
-        type            regionCoupling;
-        value           uniform 1e-3;
+        type            chtRcThermalDiffusivity;
         remoteField     k;
+        value           uniform 1e-3;
     }
 
     fluidSide

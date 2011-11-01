@@ -16,7 +16,7 @@ FoamFile
 
 solvers
 {
-    p
+    p_rgh
     {
         solver           PCG;
         preconditioner   DIC;
@@ -27,7 +27,7 @@ solvers
         relTol           0.01;
     };
 
-    pFinal
+    p_rghFinal
     {
         solver          PCG;
         preconditioner  DIC;
@@ -96,15 +96,15 @@ PISO
     momentumPredictor yes;
     nCorrectors     2;
     nNonOrthogonalCorrectors 0;
-    pRefCell        0;
-    pRefValue       0;
+    p_rghRefCell        0;
+    p_rghRefValue       0;
 }
 
 relaxationFactors
 {
-    p               0.7;
+    p_rgh           0.7;
     U               0.3;
-    T+T             0.75;
+    T               0.75;
     k               0.8;
     epsilon         0.8;
 }

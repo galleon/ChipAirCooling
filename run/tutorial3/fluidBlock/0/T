@@ -35,10 +35,11 @@ boundaryField
 
     fluidCoupledWall
     {
-        type            radiationRegionCoupling;
-        value           uniform 273;
-
+        type            chtRcTemperature;
+        radiation       on;
+        K               kappaEff;
         remoteField     T;
+        value           uniform 273;
     }
 
     fluidSide

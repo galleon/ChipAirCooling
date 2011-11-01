@@ -27,9 +27,9 @@ boundaryField
 
     solidCoupledWall
     {
-        type            regionCoupling;
-        value           uniform 1e-3;
+        type            chtRcThermalDiffusivitySlave;
         remoteField     kappaEff;
+        value           uniform 1e-3;
     }
 
     solidSide

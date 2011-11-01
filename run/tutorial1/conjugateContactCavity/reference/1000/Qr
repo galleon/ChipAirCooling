@@ -24,22 +24,22 @@ boundaryField
     movingWall
     {
         type            calculated;
-        value           nonuniform List<scalar> 10(232.026 113.13 62.0763 34.3839 17.4084 7.40505 4.40907 3.54301 0.451097 -52.1651);
+        value           nonuniform List<scalar> 10(257.979 152.711 106.754 81.4593 65.3042 54.2885 47.8358 44.5001 40.3245 8.94898);
     }
     left
     {
         type            calculated;
-        value           nonuniform List<scalar> 10(1507.87 1508.21 1508.47 1508.68 1508.84 1508.94 1508.98 1508.97 1508.88 1508.7);
+        value           nonuniform List<scalar> 10(1500.24 1500.6 1500.88 1501.09 1501.24 1501.32 1501.34 1501.3 1501.17 1500.94);
     }
     right
     {
         type            calculated;
-        value           nonuniform List<scalar> 10(-1726.57 -1727.08 -1728.97 -1732 -1735.27 -1738.32 -1740.1 -1737.91 -1734.42 -1730.97);
+        value           nonuniform List<scalar> 10(-1782.76 -1783.26 -1784.57 -1786.55 -1788.83 -1791.39 -1792.99 -1792.74 -1792.14 -1791.49);
     }
     bottom
     {
         type            calculated;
-        value           nonuniform List<scalar> 10(290.793 246.788 222.468 204.789 189.539 175.688 162.572 149.369 131.46 48.9319);
+        value           nonuniform List<scalar> 10(311.581 267.511 242.296 223.713 207.778 193.319 179.549 165.545 147.292 77.9016);
     }
     frontAndBack
     {

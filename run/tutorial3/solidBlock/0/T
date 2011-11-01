@@ -27,10 +27,11 @@ boundaryField
 
     solidCoupledWall
     {
-        type            radiationRegionCoupling;
-        value           uniform 273;
-
+        type            chtRcTemperature;
+        radiation       off;
+        K               k;
         remoteField     T;
+        value           uniform 273;
     }
 
     solidSide
