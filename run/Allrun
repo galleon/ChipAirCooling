@@ -1,57 +1,52 @@
 #!/bin/sh -x
 
-cd tutorial1/conjugateContactCavity
-Allclean
-Allrun $1
-cd ../..
+cd tutorial1
+./Allclean
+./Allrun $1
+cd ..
 
-cd tutorial1_fineSolid/conjugateContactCavity
-Allclean
-Allrun $1
-cd ../..
+cd tutorial1_extendedHTC
+./Allclean
+./Allrun $1
+cd ..
 
-cd tutorial1_extendedHTC/conjugateContactCavity
-Allclean
-Allrun $1
-cd ../..
+cd tutorial1_fineSolid
+./Allclean
+./Allrun $1
+cd ..
 
-cd tutorial1_fineSolid/conjugateContactCavity
-Allclean
-Allrun $1
-cd ../..
+cd tutorial1_noRadiation
+./Allclean
+./Allrun $1
+cd ..
 
-cd tutorial1_noRadiation/conjugateContactCavity
-Allclean
-Allrun $1
-cd ../..
+cd tutorial1_resistance
+./Allclean
+./Allrun $1
+cd ..
 
-cd tutorial1_resistance/conjugateContactCavity
-Allclean
-Allrun $1
-cd ../..
+cd tutorial1_twisted
+./Allclean
+./Allrun $1
+cd ..
 
-cd tutorial1_twisted/conjugateContactCavity
-Allclean
-Allrun $1
-cd ../..
+cd twoCavities
+./Allclean
+./Allrun $1
+cd ..
 
-cd twoCavities/conjugateContactCavity
-Allclean
-Allrun $1
-cd ../..
+cd cabin
+./Allclean
+./Allrun $1
+cd ..
 
-cd cabin/fluid
-Allclean
-Allrun $1
-cd ../..
+cd cabin_withRadiation
+./Allclean
+./Allrun $1
+cd ..
 
-cd cabin_withRadiation/fluid
-Allclean
-Allrun $1
-cd ../..
-
-cd cabin_withRadiation_noThinWall/fluid
-Allclean
-Allrun $1
-cd ../..
+cd cabin_withRadiation_noThinWall
+./Allclean
+./Allrun $1
+cd ..
 
