@@ -213,12 +213,12 @@ boundaryField
     left
     {
         type            calculated;
-        value           nonuniform List<scalar> 10(0 8.47033e-22 -1.69407e-21 1.69407e-21 0 0 -6.77626e-21 -1.35525e-20 0 -1.35525e-20);
+        value           nonuniform List<scalar> 10(0 8.47033e-22 0 0 0 0 0 0 1.35525e-20 1.35525e-20);
     }
     right
     {
         type            calculated;
-        value           nonuniform List<scalar> 10(0 0 -3.38813e-21 3.38813e-21 0 0 -6.77626e-21 -6.77626e-21 0 1.35525e-20);
+        value           nonuniform List<scalar> 10(1.69407e-21 0 0 6.77626e-21 0 0 0 -6.77626e-21 -6.77626e-21 0);
     }
     bottom
     {

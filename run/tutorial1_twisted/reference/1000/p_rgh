@@ -20,7 +20,7 @@ dimensions      [0 2 -2 0 0 0 0];
 internalField   nonuniform List<scalar> 
 100
 (
--2.21351e-11
+-2.29889e-11
 -0.00933704
 -0.0169412
 -0.0193109
@@ -151,7 +151,7 @@ boundaryField
         type            buoyantPressure;
         gradient        uniform 0;
         rho             rhok;
-        value           nonuniform List<scalar> 10(-2.21351e-11 -0.00933704 -0.0169412 -0.0193109 -0.0188713 -0.0171721 -0.0150642 -0.0133917 -0.0169062 -0.0178348);
+        value           nonuniform List<scalar> 10(-2.29889e-11 -0.00933704 -0.0169412 -0.0193109 -0.0188713 -0.0171721 -0.0150642 -0.0133917 -0.0169062 -0.0178348);
     }
     frontAndBack
     {
