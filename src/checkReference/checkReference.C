@@ -95,6 +95,8 @@ int main(int argc, char *argv[])
     instantList timeDirs = timeSelector::select0(runTime, args);
 #   include "createNamedMesh.H"
 
+    runTime.setTime(timeDirs[0], 0);
+
     // Search for list of objects for this time
     IOobjectList objects(mesh, runTime.timeName());
 
