@@ -1,0 +1,14 @@
+#!/bin/sh -x
+# Source tutorial run functions
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+runApplication chipAirCoolingSimpleFoam
+
+if [ "$1" = "storeRef" ];
+then
+    rm -rf reference
+    mkdir reference
+    cp -r 2000 log.chipAirCoolingSimpleFoam reference
+fi
+
+runApplication checkReference -time 2000
