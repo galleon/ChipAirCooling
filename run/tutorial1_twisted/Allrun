@@ -4,7 +4,7 @@
 
 runApplication blockMesh -region solid
 cp constant/solid/polyMesh/boundaryCoupled constant/solid/polyMesh/boundary
-cat setSet.cmd | setSet -region solid
+runApplication setSet -region solid -batch solid.setSet
 runApplication setsToZones -region solid -noFlipMap
 rm log.blockMesh
 
