@@ -6,7 +6,7 @@ git clone git://openfoam-extend.git.sourceforge.net/gitroot/openfoam-extend/Open
 cd OpenFOAM-1.6-ext
 
 git branch -D eads
-git checkout -b eads 8673d8a
+git checkout -b eads c387d5e87
 git merge origin/packaging/ubuntu/10.04
 
 mkdir -p tutorials/heatTransfer/chipAirCoolingFoam
