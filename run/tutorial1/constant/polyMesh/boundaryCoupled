@@ -38,8 +38,12 @@ right
 
     shadowRegion    solid;
     shadowPatch     left;
-    attached        on;
+    attached        off;
     isWall          on;
+
+    zone            rightZone;
+    master          on;
+    bridgeOverlap   off;
 }
 
 bottom

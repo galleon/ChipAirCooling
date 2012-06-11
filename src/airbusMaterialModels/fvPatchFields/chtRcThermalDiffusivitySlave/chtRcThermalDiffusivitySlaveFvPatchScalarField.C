@@ -84,14 +84,22 @@ chtRcThermalDiffusivitySlaveFvPatchScalarField::chtRcThermalDiffusivitySlaveFvPa
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-// Return a named shadow patch field
 const chtRegionCoupleBase&
 chtRcThermalDiffusivitySlaveFvPatchScalarField::shadowPatchField() const
 {
     return dynamic_cast<const chtRegionCoupleBase&>
     (
-        regionCoupleFvPatchScalarField::shadowPatchField()
+        regionCouplingFvPatchScalarField::shadowPatchField()
     );
+}
+
+
+void chtRcThermalDiffusivitySlaveFvPatchScalarField::evaluate
+(
+    const Pstream::commsTypes
+)
+{
+    fvPatchScalarField::evaluate();
 }
 
 
@@ -103,8 +111,6 @@ void chtRcThermalDiffusivitySlaveFvPatchScalarField::updateCoeffs()
     }
 
     shadowPatchField().calcThermalDiffusivity(*this, shadowPatchField());
-
-    fvPatchScalarField::updateCoeffs();
 }
 
 

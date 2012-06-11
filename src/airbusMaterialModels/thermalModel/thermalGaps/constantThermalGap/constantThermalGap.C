@@ -81,7 +81,17 @@ void Foam::constantThermalGap::modifyResistance(surfaceScalarField& DT) const
 
         forAll(faces, faceI)
         {
-            DT[faces[faceI]] = beta_.value();
+            label fI = faces[faceI];
+            if(fI < mesh().nInternalFaces())
+            {
+                DT[fI] = beta_.value();
+            }
+            else
+            {
+                const label patchI = mesh().boundaryMesh().whichPatch(fI);
+                fI -= mesh().boundaryMesh()[patchI].start();
+                DT.boundaryField()[patchI][fI] = beta_.value();
+            }
         }
     }
 }

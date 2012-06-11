@@ -21,11 +21,11 @@
 
         if (corr == nCorr-1 && nonOrth == nNonOrthCorr)
         {
-            p_rghEqn.solve(mesh.solver(p_rgh.name() + "Final"));
+            p_rghEqn.solve(mesh.solutionDict().solver(p_rgh.name() + "Final"));
         }
         else
         {
-            p_rghEqn.solve(mesh.solver(p_rgh.name()));
+            p_rghEqn.solve(mesh.solutionDict().solver(p_rgh.name()));
         }
 
         if (nonOrth == nNonOrthCorr)

@@ -47,7 +47,7 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                  Class chtRcThermalDiffusivityFvPatchScalarField Declaration
+        Class chtRcThermalDiffusivityFvPatchScalarField Declaration
 \*---------------------------------------------------------------------------*/
 
 class chtRcThermalDiffusivityFvPatchScalarField
@@ -55,6 +55,7 @@ class chtRcThermalDiffusivityFvPatchScalarField
     public chtRegionCoupleBase
 {
     // Private data
+
 
 public:
 
@@ -127,6 +128,9 @@ public:
             //- Evaluate the patch field
             virtual void updateCoeffs();
 
+            //- Evaluate the patch field
+            virtual void evaluate(const Pstream::commsTypes commsType);
+
             //- Calculate the thermal diffusivity
             virtual void calcThermalDiffusivity
             (
@@ -141,6 +145,7 @@ public:
                 const chtRcTemperatureFvPatchScalarField& neighbour,
                 const chtRegionCoupleBase& ownerK
             ) const;
+
 
         //- Write
         virtual void write(Ostream&) const;

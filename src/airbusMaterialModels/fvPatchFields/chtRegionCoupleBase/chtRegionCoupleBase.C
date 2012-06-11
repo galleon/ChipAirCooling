@@ -47,7 +47,7 @@ chtRegionCoupleBase::chtRegionCoupleBase
     const DimensionedField<scalar, volMesh>& iF
 )
 :
-    regionCoupleFvPatchScalarField(p, iF)
+    regionCouplingFvPatchScalarField(p, iF)
 {}
 
 
@@ -58,7 +58,7 @@ chtRegionCoupleBase::chtRegionCoupleBase
     const dictionary& dict
 )
 :
-    regionCoupleFvPatchScalarField(p, iF, dict)
+    regionCouplingFvPatchScalarField(p, iF, dict)
 {}
 
 
@@ -70,7 +70,7 @@ chtRegionCoupleBase::chtRegionCoupleBase
     const fvPatchFieldMapper& mapper
 )
 :
-    regionCoupleFvPatchScalarField(ptf, p, iF, mapper)
+    regionCouplingFvPatchScalarField(ptf, p, iF, mapper)
 {}
 
 
@@ -80,7 +80,7 @@ chtRegionCoupleBase::chtRegionCoupleBase
     const DimensionedField<scalar, volMesh>& iF
 )
 :
-    regionCoupleFvPatchScalarField(ptf, iF)
+    regionCouplingFvPatchScalarField(ptf, iF)
 {}
 
 
@@ -92,8 +92,17 @@ chtRegionCoupleBase::shadowPatchField() const
 {
     return dynamic_cast<const chtRegionCoupleBase&>
     (
-        regionCoupleFvPatchScalarField::shadowPatchField()
+        regionCouplingFvPatchScalarField::shadowPatchField()
     );
+}
+
+
+void chtRegionCoupleBase::initEvaluate
+(
+    const Pstream::commsTypes commsType
+)
+{
+    updateCoeffs();
 }
 
 

@@ -28,6 +28,7 @@ License
 #include "surfaceFields.H"
 #include "fvc.H"
 #include "chtRcTemperatureFvPatchScalarField.H"
+#include "processorFvPatchFields.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -111,7 +112,12 @@ void Foam::heatFlux::calcAndPrint()
     Info<< "\nWall heat fluxes [W]" << endl;
     forAll(patchHeatFluxD, patchi)
     {
-        scalar conduction = sum
+        if(isA<processorFvPatchScalarField>(T.boundaryField()[patchi]))
+        {
+            continue;
+        }
+
+        scalar conduction = gSum
         (
             mesh.magSf().boundaryField()[patchi]
            *heatFluxD.boundaryField()[patchi]
@@ -126,7 +132,7 @@ void Foam::heatFlux::calcAndPrint()
                     T.boundaryField()[patchi]
                 );
 
-            conduction -= sum
+            conduction -= gSum
             (
                 pT.source()*mesh.magSf().boundaryField()[patchi]
             );
@@ -140,7 +146,7 @@ void Foam::heatFlux::calcAndPrint()
             const surfaceScalarField& phi = 
                 obr_.lookupObject<surfaceScalarField>("phi");
 
-            convection = sum
+            convection = gSum
             (
                  rho*Cp*T.boundaryField()[patchi]
                 *phi.boundaryField()[patchi]
@@ -152,7 +158,7 @@ void Foam::heatFlux::calcAndPrint()
             const volScalarField& Qr =
                 obr_.lookupObject<volScalarField>("Qr");
 
-            radiation = sum
+            radiation = gSum
             (
                  Qr.boundaryField()[patchi]
                 *mesh.magSf().boundaryField()[patchi]

@@ -39,7 +39,7 @@ SourceFiles
 #ifndef chtRegionCoupleBase_H
 #define chtRegionCoupleBase_H
 
-#include "regionCoupleFvPatchFields.H"
+#include "regionCouplingFvPatchFields.H"
 #include "fvMatricesFwd.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -55,7 +55,7 @@ class chtRcTemperatureFvPatchScalarField;
 
 class chtRegionCoupleBase
 :
-    public regionCoupleFvPatchScalarField
+    public regionCouplingFvPatchScalarField
 {
     // Private data
 
@@ -134,8 +134,17 @@ public:
             //- Return shadow patch field
             const chtRegionCoupleBase& shadowPatchField() const;
 
+            //- Return original patch field
+            const scalarField& originalPatchField() const
+            {
+                return regionCouplingFvPatchScalarField::originalPatchField();
+            }
+
 
         // Evaluation functions
+
+            //- Initialise the evaluation of the patch field
+            virtual void initEvaluate(const Pstream::commsTypes commsType);
 
             //- Calculate the thermal diffusivity
             virtual void calcThermalDiffusivity

@@ -48,7 +48,7 @@ chtRcTemperatureFvPatchScalarField::chtRcTemperatureFvPatchScalarField
     const DimensionedField<scalar, volMesh>& iF
 )
 :
-    regionCoupleFvPatchScalarField(p, iF),
+    regionCouplingFvPatchScalarField(p, iF),
     kName_("none"),
     radiation_(false)
 {}
@@ -61,7 +61,7 @@ chtRcTemperatureFvPatchScalarField::chtRcTemperatureFvPatchScalarField
     const dictionary& dict
 )
 :
-    regionCoupleFvPatchScalarField(p, iF, dict),
+    regionCouplingFvPatchScalarField(p, iF, dict),
     kName_(dict.lookup("K")),
     radiation_(readBool(dict.lookup("radiation")))
 {}
@@ -75,7 +75,7 @@ chtRcTemperatureFvPatchScalarField::chtRcTemperatureFvPatchScalarField
     const fvPatchFieldMapper& mapper
 )
 :
-    regionCoupleFvPatchScalarField(ptf, p, iF, mapper),
+    regionCouplingFvPatchScalarField(ptf, p, iF, mapper),
     kName_(ptf.kName_),
     radiation_(ptf.radiation_)
 {}
@@ -87,7 +87,7 @@ chtRcTemperatureFvPatchScalarField::chtRcTemperatureFvPatchScalarField
     const DimensionedField<scalar, volMesh>& iF
 )
 :
-    regionCoupleFvPatchScalarField(ptf, iF),
+    regionCouplingFvPatchScalarField(ptf, iF),
     kName_(ptf.kName_),
     radiation_(ptf.radiation_)
 {}
@@ -105,8 +105,32 @@ chtRcTemperatureFvPatchScalarField::shadowPatchField() const
         const chtRcTemperatureFvPatchScalarField&
     >
     (
-        regionCoupleFvPatchScalarField::shadowPatchField()
+        regionCouplingFvPatchScalarField::shadowPatchField()
     );
+}
+
+
+void chtRcTemperatureFvPatchScalarField::initEvaluate
+(
+    const Pstream::commsTypes commsType
+)
+{
+    const chtRegionCoupleBase& K =
+        dynamic_cast<const chtRegionCoupleBase&>
+        (
+            patch().lookupPatchField<volScalarField, scalar>(kName_)
+        );
+
+    K.calcTemperature(*this, shadowPatchField(), K);
+}
+
+
+void chtRcTemperatureFvPatchScalarField::evaluate
+(
+    const Pstream::commsTypes
+)
+{
+    fvPatchScalarField::evaluate();
 }
 
 
@@ -117,13 +141,7 @@ void chtRcTemperatureFvPatchScalarField::updateCoeffs()
         return;
     }
 
-    const chtRegionCoupleBase& K =
-        dynamic_cast<const chtRegionCoupleBase&>
-        (
-            patch().lookupPatchField<volScalarField, scalar>(kName_)
-        );
-
-    K.calcTemperature(*this, shadowPatchField(), K);
+    fvPatchScalarField::updateCoeffs();
 }
 
 
@@ -136,8 +154,8 @@ tmp<scalarField> chtRcTemperatureFvPatchScalarField::source() const
     const scalarField TcNei = patchNeighbourField();
     const scalarField& Tw = *this;
 
-    const regionCoupleFvPatchScalarField& K =
-        dynamic_cast<const regionCoupleFvPatchScalarField&>
+    const chtRegionCoupleBase& K =
+        dynamic_cast<const chtRegionCoupleBase&>
         (
             p.lookupPatchField<volScalarField, scalar>(kName_)
         );

@@ -39,7 +39,7 @@ SourceFiles
 #ifndef chtRcTemperatureFvPatchScalarField_H
 #define chtRcTemperatureFvPatchScalarField_H
 
-#include "regionCoupleFvPatchFields.H"
+#include "regionCouplingFvPatchFields.H"
 #include "fvMatricesFwd.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -53,7 +53,7 @@ namespace Foam
 
 class chtRcTemperatureFvPatchScalarField
 :
-    public regionCoupleFvPatchScalarField
+    public regionCouplingFvPatchScalarField
 {
     // Private data
 
@@ -139,7 +139,14 @@ public:
             virtual const chtRcTemperatureFvPatchScalarField&
                 shadowPatchField() const;
 
+
         // Evaluation functions
+
+            //- Initialise the evaluation of the patch field
+            virtual void initEvaluate(const Pstream::commsTypes commsType);
+
+            //- Evaluate the patch field
+            virtual void evaluate(const Pstream::commsTypes commsType);
 
             //- Evaluate the patch field
             virtual void updateCoeffs();

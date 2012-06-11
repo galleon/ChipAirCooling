@@ -26,10 +26,11 @@ Class
     regionCouplingResistanceFvPatchField
 
 Description
-    Region couple patch field jump resistance on the surface
+    Region couple patch field jump resistance on the surface taking 
+    radiation into account
 
 Author
-    Hrvoje Jasak, Wikki Ltd.  All rights reserved
+    Henrik Rusche, Wikki GmbH.  All rights reserved
 
 SourceFiles
     regionCouplingResistanceFvPatchField.C
@@ -40,7 +41,6 @@ SourceFiles
 #define regionCouplingResistanceFvPatchField_H
 
 #include "chtRegionCoupleBase.H"
-#include "volMesh.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -144,6 +144,9 @@ public:
 
             //- Evaluate the patch field
             virtual void updateCoeffs();
+
+            //- Evaluate the patch field
+            virtual void evaluate(const Pstream::commsTypes commsType);
 
             //- Calculate the thermal diffusivity
             virtual void calcThermalDiffusivity

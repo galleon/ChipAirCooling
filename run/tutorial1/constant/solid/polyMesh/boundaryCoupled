@@ -31,8 +31,12 @@ FoamFile
 
         shadowRegion    region0;
         shadowPatch     right;
-        attached        on;
+        attached        off;
         isWall          on;
+
+        zone            leftZone;
+        master          off;
+        bridgeOverlap   off;
     }
     right
     {

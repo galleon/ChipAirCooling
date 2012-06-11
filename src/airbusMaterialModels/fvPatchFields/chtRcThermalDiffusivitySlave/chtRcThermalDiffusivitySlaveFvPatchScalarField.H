@@ -133,6 +133,8 @@ public:
             //- Evaluate the patch field
             virtual void updateCoeffs();
 
+            //- Evaluate the patch field
+            virtual void evaluate(const Pstream::commsTypes commsType);
 };
 
 
