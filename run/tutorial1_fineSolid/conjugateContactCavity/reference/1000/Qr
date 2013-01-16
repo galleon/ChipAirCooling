@@ -1,0 +1,51 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM Extend Project: Open source CFD        |
+|  \\    /   O peration     | Version:  1.6-ext                               |
+|   \\  /    A nd           | Web:      www.extend-project.de                 |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    location    "1000";
+    object      Qr;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [1 0 -3 0 0 0 0];
+
+internalField   uniform 0;
+
+boundaryField
+{
+    movingWall
+    {
+        type            calculated;
+        value           nonuniform List<scalar> 10(277.943 163.952 114.67 87.7521 70.6345 58.9925 52.1036 48.3532 43.6607 9.99003);
+    }
+    left
+    {
+        type            calculated;
+        value           nonuniform List<scalar> 10(1625.95 1626.34 1626.64 1626.87 1627.02 1627.11 1627.14 1627.09 1626.95 1626.71);
+    }
+    right
+    {
+        type            calculated;
+        value           nonuniform List<scalar> 10(-1930.03 -1930.54 -1931.87 -1933.94 -1936.34 -1938.97 -1941.19 -1941.18 -1940.63 -1939.98);
+    }
+    bottom
+    {
+        type            calculated;
+        value           nonuniform List<scalar> 10(333.277 286.858 260.134 240.332 223.334 207.905 193.206 178.267 158.954 86.5203);
+    }
+    frontAndBack
+    {
+        type            empty;
+    }
+}
+
+
+// ************************************************************************* //

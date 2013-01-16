@@ -1,0 +1,72 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM Extend Project: Open Source CFD        |
+|  \\    /   O peration     | Version:  1.6-ext                               |
+|   \\  /    A nd           | Web:      www.extend-project.de                 |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      T;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 0 0 1 0 0 0];
+
+internalField   uniform 273;
+
+boundaryField
+{
+    movingWall
+    {
+        type            fixedValue;
+        value           uniform 320;
+    }
+
+    left
+    {
+        type            fixedValue;
+        value           uniform 273;
+    }
+
+    right2
+    {
+        type            fixedValue;
+        value           uniform 373;
+    }
+
+    right
+    {
+        type            chtRcTemperature;
+        radiation       on;
+        K               kappaEff;
+        remoteField     T;
+        value           uniform 273;
+    }
+
+    left2
+    {
+        type            chtRcTemperature;
+        radiation       on;
+        K               kappaEff;
+        remoteField     T;
+        value           uniform 273;
+    }
+
+    ".*"
+    {
+        type            adiabatic;
+        K               kappaEff;
+        value           uniform 273;
+    }
+
+    frontAndBack
+    {
+        type            empty;
+    }
+}
+
+// ************************************************************************* //

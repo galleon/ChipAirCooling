@@ -146,8 +146,15 @@ boundaryField
     bottom
     {
         type            extendedWallHeatTransfer;
+<<<<<<< HEAD
+
+        K               kappaEff;
+        radiation       on;
+
+=======
         K               kappaEff;
         radiation       1;
+>>>>>>> client
         Tinf            293;
         hc              20;
         alpha           1;

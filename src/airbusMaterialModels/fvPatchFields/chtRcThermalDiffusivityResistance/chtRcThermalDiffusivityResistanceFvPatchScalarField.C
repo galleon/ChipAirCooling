@@ -125,30 +125,31 @@ chtRcThermalDiffusivityResistanceFvPatchScalarField::calcThermalDiffusivity
 ) const
 {
     const fvPatch& p = owner.patch();
-    const fvMesh& mesh = p.boundaryMesh().mesh();
-    const magLongDelta& mld = magLongDelta::New(mesh);
+    const magLongDelta& mld = magLongDelta::New(p.boundaryMesh().mesh());
 
-//    const fvPatch& np = neighbour.patch();
-//    const magLongDelta& smld = magLongDelta::New(np.boundaryMesh().mesh());
+    const fvPatch& np = neighbour.patch();
+    const magLongDelta& smld = magLongDelta::New(np.boundaryMesh().mesh());
 
     const chtRcTemperatureFvPatchScalarField& TwOwn =
         dynamic_cast<const chtRcTemperatureFvPatchScalarField&>
         (
             p.lookupPatchField<volScalarField, scalar>("T")
         );
-    scalarField TwNei(p.size(), 0.0);
-
     scalarField& k = owner;
     const scalarField& fOwn = owner.originalPatchField();
     const scalarField TcOwn = TwOwn.patchInternalField();
 
-    scalarField fNei(p.size());
-    scalarField TcNei(p.size());
+    scalarField& k = owner;
+    const scalarField kOwn = owner.originalPatchField()
+        /(1 - p.weights())/mld.magDelta(p.index());
+    const scalarField kNei = owner.regionCouplePatch().interpolate
+    (
+        neighbour.originalPatchField()
+        /(1 - np.weights())/smld.magDelta(np.index())
+    );
 
     scalarField QrOwn(p.size(), 0.0);
     scalarField fourQroOwn(p.size(), 0.0);
-    scalarField fourQroNei(p.size());
-
     if (TwOwn.radiation())
     {
         QrOwn += p.lookupPatchField<volScalarField, scalar>("Qr");
@@ -161,92 +162,32 @@ chtRcThermalDiffusivityResistanceFvPatchScalarField::calcThermalDiffusivity
     {
         Field<VectorN<scalar, 5> > lData(neighbour.size());
 
-        {
-            const scalarField& fNei = neighbour.originalPatchField();
-            scalarField TcNei = TwOwn.shadowPatchField().patchInternalField();
-
-            forAll(lData, facei)
-            {
-                lData[facei][0] = TcNei[facei];
-                lData[facei][1] = fNei[facei];
-            }
-        }
-
-        if(TwOwn.shadowPatchField().radiation())
-        {
-            const scalarField& TwNei = TwOwn.shadowPatchField();
-            const scalarField& QrNei =
-                owner.lookupShadowPatchField<volScalarField, scalar>("Qr");
-
-            forAll(lData, facei)
-            {
-                lData[facei][2] = TwNei[facei];
-                lData[facei][3] = QrNei[facei];
-            }
-        }
-
-        if(isA<chtRcThermalDiffusivitySlaveFvPatchScalarField>(owner))
-        {
-            forAll(lData, facei)
-            {
-                lData[facei][4] = conductivity_[facei];
-            }
-        }
-
-        const Field<VectorN<scalar, 5> > iData =
-            owner.regionCouplePatch().interpolate(lData);
-
-        forAll(iData, facei)
-        {
-            TcNei[facei] = iData[facei][0];
-            fNei[facei] = iData[facei][1];
-        }
-
-        if(TwOwn.shadowPatchField().radiation())
-        {
-            forAll(iData, facei)
-            {
-                TwNei[facei] = iData[facei][2];
-                fourQroNei[facei] +=
-                    4.0*radiation::sigmaSB.value()*pow4(iData[facei][2]);
-                Qr[facei] += iData[facei][3];
-            }
-        }
-
-        if(isA<chtRcThermalDiffusivitySlaveFvPatchScalarField>(owner))
-        {
-            forAll(lData, facei)
-            {
-                cond[facei] = iData[facei][4];
-            }
-        }
-        else
-        {
-            cond = conductivity_;
-        }
+    scalarField cond(p.size());
+    if(isA<chtRcThermalDiffusivitySlaveFvPatchScalarField>(owner))
+    {
+        cond = owner.regionCouplePatch().interpolate(conductivity_);
+    }
+    else
+    {
+        cond = conductivity_;
     }
 
-    // Do interpolation
-    harmonic<scalar> interp(mesh);
-    const scalarField weights = interp.weights(fOwn, fNei, p);
-    scalarField kHarm = weights*fOwn + (1.0 - weights)*fNei;
-    kHarm *= cond/(k*p.deltaCoeffs() + cond);
-
-    const scalarField kOwn = fOwn/(1.0 - p.weights())/mld.magDelta(p.index());
-    const scalarField kNei = fNei/p.weights()/mld.magDelta(p.index());
+    const scalarField kHarm = k*cond/(k*p.deltaCoeffs() + cond);
 
     //Info << "kOwn = " << kOwn << endl;
     //Info << "kNei = " << kNei << endl;
     //Info << "TcOwn = " << TcOwn << endl;
     //Info << "TcNei = " << TcNei << endl;
-    //Info << "DeltaT = " << TcNei - TcOwn << endl;
 
     //Info << "QrOwn = " << QrOwn << endl;
     //Info << "Qr = " << Qr << endl;
     //Info << "kOwn + kNei = " << (kOwn + kNei) << endl;
+    //Info << "f1 = " << fourQroOwn << endl;
+    //Info << "f2 = " << fourQroNei << endl;
 
     scalarField temp = TwNei*(cond + kNei) + fourQroNei;
 
+/*
     k = -TwOwn*
     (
         kOwn*
@@ -258,8 +199,40 @@ chtRcThermalDiffusivityResistanceFvPatchScalarField::calcThermalDiffusivity
     );
 
     k /= TwOwn*(kOwn*temp + cond*(TwNei*kNei + fourQroNei)) + fourQroOwn*temp;
+
     k += kOwn*TcOwn;
     k /= stabilise(TcOwn - TcNei, SMALL)*p.deltaCoeffs();
+*/
+
+    // Expression is equivalent to the one above 
+    k = kOwn*
+    (
+        TwOwn*
+        (
+            TwNei*
+            (
+                cond*(kNei*(TcOwn - TcNei) - fourQroOwn - fourQroNei - Qr)
+              - kNei*(fourQroOwn + QrOwn)
+            )
+          + fourQroNei*(TcOwn*cond - fourQroOwn - QrOwn)
+        )
+      + (TcOwn*fourQroOwn*temp)
+    );
+
+    k /= stabilise
+    (
+        (TcOwn - TcNei)*
+        (
+            TwOwn*
+            (
+                kOwn*temp + cond*(TwNei*kNei + fourQroNei)
+            )
+          + fourQroOwn*temp
+        ),
+        SMALL
+    );
+
+    k /= p.deltaCoeffs();
 
     //Info << "k = " << k << endl;
 
@@ -277,8 +250,8 @@ chtRcThermalDiffusivityResistanceFvPatchScalarField::calcThermalDiffusivity
 void
 chtRcThermalDiffusivityResistanceFvPatchScalarField::calcTemperature
 (
-    chtRcTemperatureFvPatchScalarField& TwOwn,
-    const chtRcTemperatureFvPatchScalarField& TwNei,
+    chtRcTemperatureFvPatchScalarField& owner,
+    const chtRcTemperatureFvPatchScalarField& neighbour,
     const chtRegionCoupleBase& ownerK
 ) const
 {
@@ -286,14 +259,21 @@ chtRcThermalDiffusivityResistanceFvPatchScalarField::calcTemperature
     const fvMesh& mesh = p.boundaryMesh().mesh();
     const magLongDelta& mld = magLongDelta::New(mesh);
 
-//    const fvPatch& np = neighbour.patch();
-//    const magLongDelta& smld = magLongDelta::New(np.boundaryMesh().mesh());
+    const fvPatch& np = neighbour.patch();
+    const magLongDelta& smld = magLongDelta::New(np.boundaryMesh().mesh());
 
-    const scalarField& fOwn = ownerK.originalPatchField();
-    const scalarField TcOwn = TwOwn.patchInternalField();
+    const scalarField TcOwn = owner.patchInternalField();
+    const scalarField TcNei = owner.patchNeighbourField();
 
-    scalarField fNei(p.size());
-    scalarField TcNei(p.size());
+    const scalarField kOwn = ownerK.originalPatchField()
+        /(1 - p.weights())/mld.magDelta(p.index());
+    const scalarField kNei = owner.regionCouplePatch().interpolate
+    (
+        ownerK.shadowPatchField().originalPatchField()
+        /(1 - np.weights())/smld.magDelta(np.index())
+    );
+
+    scalarField& TwOwn = owner;
 
     scalarField QrOwn(p.size(), 0.0);
     scalarField fourQroOwn(p.size(), 0.0);
@@ -309,80 +289,22 @@ chtRcThermalDiffusivityResistanceFvPatchScalarField::calcTemperature
     scalarField cond(p.size());
 
     {
-        Field<VectorN<scalar, 5> > lData(TwNei.size());
-
-        {
-            const scalarField& fNei =
-                ownerK.shadowPatchField().originalPatchField();
-            scalarField TcNei = TwOwn.shadowPatchField().patchInternalField();
-
-            forAll(lData, facei)
-            {
-                lData[facei][0] = TcNei[facei];
-                lData[facei][1] = fNei[facei];
-            }
-        }
-
-        if(TwOwn.shadowPatchField().radiation())
-        {
-            const scalarField& QrNei =
-                TwOwn.lookupShadowPatchField<volScalarField, scalar>("Qr");
-            const scalarField& TwNei = TwOwn.shadowPatchField();
-
-            forAll(lData, facei)
-            {
-                lData[facei][2] = TwNei[facei];
-                lData[facei][3] = QrNei[facei];
-            }
-        }
-
-        if(isA<chtRcThermalDiffusivitySlaveFvPatchScalarField>(ownerK))
-        {
-            forAll(lData, facei)
-            {
-                lData[facei][4] = conductivity_[facei];
-            }
-        }
-
-        const Field<VectorN<scalar, 5> > iData =
-            TwOwn.regionCouplePatch().interpolate(lData);
-
-        forAll(iData, facei)
-        {
-            TcNei[facei] = iData[facei][0];
-            fNei[facei] = iData[facei][1];
-        }
-
-        if(TwOwn.shadowPatchField().radiation())
-        {
-            forAll(iData, facei)
-            {
-                Qr[facei] += iData[facei][3];
-                fourQroNei[facei] +=
-                    4.0*radiation::sigmaSB.value()*pow4(iData[facei][2]);
-            }
-        }
-
-        if(isA<chtRcThermalDiffusivitySlaveFvPatchScalarField>(ownerK))
-        {
-            forAll(lData, facei)
-            {
-                cond[facei] = iData[facei][4];
-            }
-        }
-        else
-        {
-            cond = conductivity_;
-        }
+        Qr += owner.regionCouplePatch().interpolate
+        (
+            owner.lookupShadowPatchField<volScalarField, scalar>("Qr")
+        );
+        fourQroNei += 4.0*radiation::sigmaSB.value()*pow4(TwNei);
     }
 
-    // Do interpolation
-    harmonic<scalar> interp(mesh);
-    scalarField weights = interp.weights(fOwn, fNei, p);
-    const scalarField kHarm = weights*fOwn + (1.0 - weights)*fNei;
-
-    const scalarField kOwn = fOwn/(1.0 - p.weights())/mld.magDelta(p.index());
-    const scalarField kNei = fNei/p.weights()/mld.magDelta(p.index());
+    scalarField cond(p.size());
+    if(isA<chtRcThermalDiffusivitySlaveFvPatchScalarField>(owner))
+    {
+        cond = owner.regionCouplePatch().interpolate(conductivity_);
+    }
+    else
+    {
+        cond = conductivity_;
+    }
 
     //Info << "kOwn = " << kOwn << endl;
     //Info << "kNei = " << kNei << endl;
@@ -395,12 +317,23 @@ chtRcThermalDiffusivityResistanceFvPatchScalarField::calcTemperature
 
     TwOwn *=
     (
-        TwNei*(cond*(kNei*TcNei + fourQroOwn + fourQroNei + Qr + kOwn*TcOwn) + kNei*temp)
+        TwNei*
+        (
+            cond*
+            (
+                kNei*TcNei + fourQroOwn + fourQroNei + Qr + kOwn*TcOwn
+            )
+          + kNei*temp
+        )
       + fourQroNei*temp
     )
     /
     (
-        TwOwn*((TwNei*(cond*(kOwn + kNei) + kOwn*kNei)) + fourQroNei*(kOwn + cond))
+        TwOwn*
+        (
+            TwNei*(cond*(kOwn + kNei) + kOwn*kNei)
+          + fourQroNei*(kOwn + cond)
+        )
       + fourQroOwn*(TwNei*(cond + kNei) + fourQroNei)
     );
 

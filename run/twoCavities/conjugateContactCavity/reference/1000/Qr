@@ -1,0 +1,71 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM Extend Project: Open source CFD        |
+|  \\    /   O peration     | Version:  1.6-ext                               |
+|   \\  /    A nd           | Web:      www.extend-project.de                 |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    location    "1000";
+    object      Qr;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [1 0 -3 0 0 0 0];
+
+internalField   uniform 0;
+
+boundaryField
+{
+    movingWall
+    {
+        type            calculated;
+        value           nonuniform List<scalar> 10(-215.655 -215.166 -214.702 -214.262 -213.846 -213.455 -213.089 -212.748 -212.432 -212.142);
+    }
+    left
+    {
+        type            calculated;
+        value           nonuniform List<scalar> 10(341.254 341.383 341.527 341.689 341.871 342.074 342.301 342.551 342.824 343.122);
+    }
+    right
+    {
+        type            calculated;
+        value           nonuniform List<scalar> 10(-148.515 -159.716 -177.591 -181.442 -180.549 -179.475 -178.553 -177.718 -176.886 -176.882);
+    }
+    bottom
+    {
+        type            calculated;
+        value           nonuniform List<scalar> 10(83.0033 68.1575 60.1357 54.34 49.3 44.4747 39.2307 32.4217 22.4885 0.676775);
+    }
+    movingWall2
+    {
+        type            calculated;
+        value           nonuniform List<scalar> 10(10.0765 4.78006 2.00833 0.335345 -0.694135 -1.30034 -1.45102 -1.46468 -1.4691 -4.14178);
+    }
+    left2
+    {
+        type            calculated;
+        value           nonuniform List<scalar> 10(166.385 163.952 160.343 160.179 161.338 162.61 163.831 165.054 166.312 167.238);
+    }
+    right2
+    {
+        type            calculated;
+        value           nonuniform List<scalar> 10(-150.875 -150.899 -150.92 -150.936 -150.95 -150.961 -150.97 -150.975 -150.977 -150.976);
+    }
+    bottom2
+    {
+        type            calculated;
+        value           nonuniform List<scalar> 10(-3.12314 -10.5821 -11.9233 -12.7558 -13.515 -14.2785 -15.103 -16.0887 -17.463 -19.648);
+    }
+    frontAndBack
+    {
+        type            empty;
+    }
+}
+
+
+// ************************************************************************* //

@@ -1,0 +1,49 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM Extend Project: Open Source CFD        |
+|  \\    /   O peration     | Version:  1.6-ext                               |
+|   \\  /    A nd           | Web:      www.extend-project.de                 |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      kappaEff;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [1 1 -3 -1 0 0 0];
+
+internalField   uniform 1e-3;
+
+boundaryField
+{
+    ".*"
+    {
+        type            zeroGradient;
+    }
+
+    right
+    {
+        type            chtRcThermalDiffusivityResistance;
+        remoteField     kappaEff;
+        conductivity    uniform 5;
+        value           uniform 1e-3;
+    }
+
+    left2
+    {
+        type            chtRcThermalDiffusivitySlave;
+        remoteField     kappaEff;
+        value           uniform 1e-3;
+    }
+
+    frontAndBack
+    {
+        type            empty;
+    }
+}
+
+// ************************************************************************* //

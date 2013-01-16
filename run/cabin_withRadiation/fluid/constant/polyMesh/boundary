@@ -1,0 +1,152 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.0.x                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       polyBoundaryMesh;
+    location    "1/polyMesh";
+    object      boundary;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+18
+(
+    cabHeatTransmissiveWall
+    {
+        type            regionCouple;
+        nFaces          189;
+        startFace       48217;
+
+        shadowRegion    region0;
+        shadowPatch     bayHeatTransmissiveWall;
+        attached        on;
+        isWall          on;
+
+    }
+    bayHeatTransmissiveWall
+    {
+        type            regionCouple;
+        nFaces          189;
+        startFace       48406;
+
+        shadowRegion    region0;
+        shadowPatch     cabHeatTransmissiveWall;
+        attached        on;
+        isWall          on;
+
+    }
+    walls
+    {
+        type            wall;
+        nFaces          228;
+        startFace       48595;
+    }
+    topExtWall
+    {
+        type            wall;
+        nFaces          172;
+        startFace       48823;
+    }
+    toSolidR
+    {
+        type            regionCouple;
+        nFaces          67;
+        startFace       48995;
+
+        shadowRegion    solid;
+        shadowPatch     toFluidR;
+        attached        on;
+        isWall          on;
+    }
+    cabInlet
+    {
+        type            patch;
+        nFaces          4;
+        startFace       49062;
+    }
+    toSolidL
+    {
+        type            regionCouple;
+        nFaces          67;
+        startFace       49066;
+
+        shadowRegion    solid;
+        shadowPatch     toFluidL;
+        attached        on;
+        isWall          on;
+    }
+    passengers
+    {
+        type            wall;
+        nFaces          672;
+        startFace       49133;
+    }
+    bottomExtWall
+    {
+        type            wall;
+        nFaces          300;
+        startFace       49805;
+    }
+    core2
+    {
+        type            wall;
+        nFaces          118;
+        startFace       50105;
+    }
+    core1
+    {
+        type            wall;
+        nFaces          148;
+        startFace       50223;
+    }
+    bayInletL
+    {
+        type            patch;
+        nFaces          9;
+        startFace       50371;
+    }
+    bayInletR
+    {
+        type            patch;
+        nFaces          9;
+        startFace       50380;
+    }
+    cabOutletL
+    {
+        type            patch;
+        nFaces          4;
+        startFace       50389;
+    }
+    cabOutletR
+    {
+        type            patch;
+        nFaces          4;
+        startFace       50393;
+    }
+    bayOutletL
+    {
+        type            patch;
+        nFaces          5;
+        startFace       50397;
+    }
+    bayOutletR
+    {
+        type            patch;
+        nFaces          5;
+        startFace       50402;
+    }
+    defaultFaces
+    {
+        type            empty;
+        nFaces          52614;
+        startFace       50407;
+    }
+)
+
+// ************************************************************************* //

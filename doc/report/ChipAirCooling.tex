@@ -1,0 +1,500 @@
+\input{preamble}
+
+% Print DRAFT on every page
+% ~~~~~~~~~~~~~~~~~~~~~~~~~
+%\usepackage[light]{draftcopy}
+%\draftcopySetGrey{0.9}
+%\psdraft
+%
+\renewcommand{\ReportType}{Project Report}
+\renewcommand{\ReportNo}{MS/EADS/001}
+
+%
+\begin{document}
+%
+%
+\title
+{
+  \bfseries Simulation of the Air Cooling of Electronic Chip Assemblies 
+}
+%
+\author
+{
+     \ReportType\\ \\ \\
+     Wikki GmbH\\ \\
+     \ReportNo
+}
+%
+\maketitle
+%
+\section*{Abstract}
+  This Report gives an overview of the governing equations for 3D
+  buoyant flows with radiation and conjugate heat transfer, boundary
+  conditions, software organization, case setup and sample results for
+  the simulation environment developed under the {\bfseries Simulation
+    of the Air Cooling of Electronic Chip Assemblies} project.
+
+%
+\section*{Introduction}
+
+The chip cooling assembly is a complex device that is characterized by
+a very complex physical phenomena that involves coupling of energy
+fields between fluid and solid phase. Among the most important
+phenomena, cooling of chip and motherboard assembly includes turbulent
+buoyant flow with radiation in fluid phase, heat transfer with contact
+resistance in solid domain with coupling between energy fields in
+fluid and solid domains along the fluid-solid interface. In addition,
+boundary conditions on inlet are time dependent and the volumetric
+flow rate through the inlet boundary is controlled by a controller
+that regulates the value of the volumetric flow rate depending in the
+measured average temperature on the outlet. In order to simulate the
+cooling of chip and motherboard assembly, governing partial
+differential equations, material models and corresponding boundary
+conditions are formulated and presented in this report together with
+the solution algorithm and followed by exmaples of the usage of the
+code.
+
+\section*{Governing Equations}
+
+The system of governing equations describing the buoyant turbulent
+flow with conjugate heat transfer is given by equations of
+conservation of mass, momentum and energy. Assuming that the
+temperature variation is small among layers, Boussinesq approximation
+can be used:
+
+\begin{equation}\label{eq:boussinesq}
+\rho = \rho_0(1 - \beta(T - T_0))
+\end{equation}
+Equation \ref{eq:boussinesq} is valid provided that the following
+condition is satisfied:
+
+\begin{equation}\label{eq:condition}
+  \frac{\rho - \rho_0}{\rho_0} = \beta(T - T_0) \ll 1.
+\end{equation}
+Therefore, range of validity of Boussinesq approximation is for small
+to moderate density variations. In that case transient terms in
+governing equations can be neglected and density can be considered
+constant except in buoyant terms. Furthermore, thermal heating and
+viscous dissipation are considered small due to small density
+variations. With these assumption the resulting system of governing
+equations for the fluid phase is as follows:
+
+Continuity equation:
+\begin{equation}\label{eq:fluid-continuity}
+  \frac{\partial u_i}{\partial x_i} = 0
+\end{equation}
+
+Momentum equation:
+\begin{equation}\label{eq:fluid-momentum}
+\frac{\partial u_i}{\partial t} +
+  \frac{\partial(u_ju_i)}{\partial x_j} = 
+    -\frac{\partial}{\partial x_i}
+    \left( \frac{p}{\rho_0} \right) + g_i
+  -\beta(T - T_0)g_{i} 
+  + \frac{\partial}{\partial x_j}
+  \left[\frac{\mu_{eff}}{\rho_0}
+    \left(\frac{\partial u_i}{\partial x_j} + 
+    \frac{\partial u_j}{\partial u_i}\right)\right]
+\end{equation}
+
+Energy equation:
+\begin{equation}\label{eq:fluid-energy}
+\frac{\partial T}{\partial t} +
+\frac{\partial}{\partial x_i}(u_i T) = 
+\frac{\partial}{\partial x_j}
+\left(\frac{k_{eff}}{\rho_0 c_p}\frac{\partial T}{\partial x_j}\right) 
++ \frac{1}{\rho_0 c_p} S_r
+\end{equation}
+
+Symbol $g_i$ is the vector of gravitational acceleration, $S_r$ is the
+contribution from the various sources including the radiation
+contribution and all other symbols have their usual meanings.
+
+The set of equations describes the heat transfer in the solid phase
+and it is given by the following energy equation:
+\begin{equation}\label{eq:solid-energy}
+\rho C \frac{\partial T}{\partial t} +
+\frac{\partial}{\partial x_i}\left(k \frac{\partial T}{\partial x_i}\right) 
++ S_s = 0
+\end{equation}
+
+In order to compute turbulent transport coefficients, $\mu_{eff}$ and
+$k_{eff}$, turbulence equations must be added to the the set of
+equations. Naturally, the exact form of the turbulent equations will
+depend on the selected turbulence model. In this report, $k-\epsilon$
+model with wall functions was used to compute results.
+
+In addition, the conduction of the heat between chip and motherboard
+assembly can be altered due to surface roughness and/or bonding. This
+phenomena is is accounted for through a contact resistance model:
+\begin{equation}
+  q_i = - \beta_c \frac{\partial T}{\partial x_i}
+\end{equation}
+The coefficient $\beta_c$ represents thermal conductivity that depends
+on the type of the contact between two solid materials and it is
+usually determined experimentally. Contact resistance model is an
+additional equation that is applied to a surface inside of the solid
+computation domain.
+
+\section*{Solution Algorithm}
+
+Two solution algorithms for simulating the steady and unsteady flow in
+chip cooling assembly were implemented.  The steady state solution of
+the fluid flow is performed by the well known SIMPLE algorithm. The
+solution algorithm is implemented in the file
+``chipCoolingSimpleFoam.C'' and it uses the predictor-corrector scheme
+to update pressure and velocity fields. The steady state code can be
+found in the directory ``/src/chipAirCoolingSimpleFoam''. The unsteady
+solution algorithm was implemented in the main code
+``chipAirCoolingFoam.C''and it uses PISO time stepping algorithm for
+time marching. The unsteady code can be found in the
+``/src/chipAirCoolingFoam'' directory. Both solution algorithms are
+controlled through ``controlDict'', ``fvSchemes'' and ``fvSolution''
+files that define parameters of the discretization scheme, solution
+algorithm and overall behavior.
+
+The energy equation solution is complicated by the fact that the
+temperature fields in solid and fluid regions are coupled through a
+common boundaries. In order to solve the coupled problem, the coupled
+matrix technology available in OpenFOAM is used to create a single
+matrix for energy equation that spans both fluid and solid
+regions. Once the velocity field is available by solving the fluid
+equations, coupled matrix for energy equation for both fluid and solid
+phases is formed and solved. The code for coupling of energy equations
+in fluid and solid phase can be found in ``solveEnergy.H'' file. The
+main point of the coupling code is a creation of the coupled matrix
+that contains temperature fields for both fluid and solid phase:
+
+\begin{verbQuoteSmall}
+fvScalarMatrix* TFluid = new fvScalarMatrix
+(
+    rho*Cp*
+    (
+        fvm::ddt(T)
+      + fvm::div(phi, T)
+    )
+  - fvm::laplacian(kappaEff, T)
+    ==
+    radiation->Ru()
+  - fvm::Sp(4.0*radiation->Rp()*pow3(T), T)
+);
+
+TFluid->boundaryManipulate(T.boundaryField());
+TFluid->relax(mesh.relaxationFactor("T+T"));
+
+fvScalarMatrix* TSolid = new fvScalarMatrix
+(
+    fvm::ddt(rhoCpsolid, Tsolid)
+  - fvm::laplacian(ksolidf, Tsolid, "laplacian(k,T)")
+  + fvm::SuSp(-solidThermo.S()/Tsolid, Tsolid)
+);
+
+TSolid->relax(mesh.relaxationFactor("T+T"));
+
+// Add fluid equation
+TEqns.set(0, TFluid);
+
+// Add solid equation
+TEqns.set(1, TSolid);
+
+TEqns.solve();
+\end{verbQuoteSmall}
+
+\section*{Software Organization}
+
+Software implementation of the chip air cooling simulation tool
+consists of the solver executable and multi-material library
+components. Solver executable is capable of simulating of complex
+physical phenomena including buoyant flow with heat and radiative
+transfer in fluid and heat transfer and contact resistance in solid
+domain. Multi-material library is capable of providing the material
+properties and local resistance laws that are needed to solve coupled
+heat transfer problem.
+
+The steady main code can be found in ``src/chipAirCoolingSimpleFoam'' directory
+and the main code in the file ``chipAirCoolingSimpleFoam.C''. Multi-material
+library can be found in ``src/airbusMaterialModels'' directory while tutorial cases
+can be found in ``run/''. The unsteady main code can be found in
+``src/chipAirCoolingFoam'' in the file ``chipAirCoolingSimpleFoam.C''.
+
+
+\subsection*{Tutorials}
+Tutorial1 example in in the ``run'' directory represents a simple
+example of a steady state conjugate heat transfer in lid driven
+cavity. Conjugate heat transfer is taking the place through a shared
+boundary between fluid and solid domains. We first need to generate
+computation mesh for both solid and fluid regions. In the directory
+``tutorial1'', solid phase mesh can be found under
+``tutorial1/heatedContactBlock''. In order to facilitate a better
+understanding of the mesh setup, directory ``constant/polyMesh''
+contains pre-generated mesh. It is important to observe the following
+entry in the file\\
+``tutorial1/heatedContactBlock/constant/polyMesh/boundary'':
+
+\begin{verbQuoteSmall}
+left
+{
+    type regionCouple;
+    nFaces 10;
+    startFace 200;
+
+    shadowRegion    region0;
+    shadowPatch     right;
+    attached        on;
+    attachedWalls   on;
+}
+\end{verbQuoteSmall}
+
+The patch called ``left'' is the solid side of the coupling patch and
+as such must contain the entries describing the fluid side of the
+corresponding patch. Similarly, on the fluid side the corresponding
+patch is called ``right'' and it has the following entries in the
+``tutorial1/conjugateContactCavity/constant/boundary'' file:
+
+\begin{verbQuoteSmall}
+right
+{
+    type regionCouple;
+    nFaces 10;
+    startFace 200;
+
+    shadowRegion    solid;
+    shadowPatch     left;
+    attached        on;
+    attachedWalls   on;
+}
+\end{verbQuoteSmall}
+
+In order to setup the solid materials and contact resistance
+properties, cell and face zones have to be created by executing the
+following commands in setSet utility:
+
+\begin{verbQuoteSmall}
+setSet
+
+cellSet solidBlock new boxToCell (0.15 0 0) (0.2 0.1 0.01);
+faceSet contactSurface new boxToFace (0.1499 0 0) (0.1501 0.1 0.01);
+quit
+
+setsToZones -noFlipMap
+\end{verbQuoteSmall}
+
+The names ``solidBlock'' and ``contactSurface'' can now be used to
+specify material and contact properties in
+``tutorial1/heatedContactBlock/constant/thermalProperties'' file:
+
+\begin{verbQuoteSmall}
+thermal
+\{
+    type                    multiMaterialZones;
+
+    laws
+    (
+        material0
+        \{
+            type            constant;
+            rho             rho [1 -3 0 0 0] 10;
+            C               C [0 2 -2 -1 0] 1000;
+            k               k [1 1 -3 -1  0] 0.001;
+
+            zones           ( solidBlock );
+        \}
+    );
+
+    gaps
+    (
+        air // gap 0
+        \{
+            type            constant;
+            beta            beta [1 1 -3 -1 0] 0.00025;
+            zones           ( contactSurface );
+        \}
+    );
+\}
+\end{verbQuoteSmall}
+
+In order to setup the fluid phase for coupled problem solution,
+several symbolic links from the solid directory are required:
+
+\begin{itemize}
+\item In the directory ``tutorial1/conjugateContactCavity/0'' the
+  following symbolic link is required to point to the corresponding
+  ``0/'' directory on the solid side: `` solid $\rightarrow$
+  ../../heatedContactBlock/0''
+\item In the directory ``tutorial1/conjugateContactCavity/constant''
+  the following link must point to the corresponding ``constant/''
+  directory on the solid side: `` solid $\rightarrow$
+  ../../heatedContactBlock/constant''
+\item In the directory
+  ``tutorial1/conjugateContactCavity/constant/polyMesh/'' the
+  following symbolic links are required: \\ `` cellZones $\rightarrow$
+  ../../../heatedContactBlock/constant/polyMesh/cellZones'',
+  \\ ``faceZones $\rightarrow$
+  ../../../heatedContactBlock/constant/polyMesh/faceZones'', \\ ``sets
+  $\rightarrow$ ../../../heatedContactBlock/constant/polyMesh/sets'',
+  and\\ ``solid $\rightarrow$
+  ../../../heatedContactBlock/constant/polyMesh
+\end{itemize}
+
+Physical and model constants together with the flow solver control
+files can be found in the ``run/tutorial1/constant''. A sample results
+of runnning the code can be seen in figures \ref{fig:fig1}
+through \ref{fig:fig3}. Figures \ref{fig:fig1} and \ref{fig:fig2} show
+the initial and the final temperature distributions where the effect
+of the contact resistance can be clearly seen in the solid
+region. Figure \ref{fig:fig3} shows the distribution of the velocity
+in the fluid domain clearly indicating that there is no velocity field
+in the solid region.
+
+\begin{figure*}[htbp]
+\begin{center}
+\epsfig{figure=figures/Tinit.eps, width = 10.0 cm,angle=0,clip=}
+\caption{Initial temperature distribution}
+\label{fig:fig1}
+\end{center}
+\end{figure*}
+
+\begin{figure*}[htbp]
+\begin{center}
+\epsfig{figure=figures/Tfinal.eps, width = 10.0 cm,angle=0,clip=}
+\caption{Final temperature distribution}
+\label{fig:fig2}
+\end{center}
+\end{figure*}
+
+\begin{figure*}[htbp]
+\begin{center}
+\epsfig{figure=figures/U.eps, width = 10.0 cm,angle=0,clip=}
+\caption{velocity magnitude distribution}
+\label{fig:fig3}
+\end{center}
+\end{figure*}
+
+
+Tutorial2 represents a chip-motherboard assembly consisting of solid
+and fluid domains. The tutorial2 files can be found in
+``run/tutorial2'' directory. Overall procedure for
+creating the mesh is exactly the same as in tutorial1 example but this
+time executed in the directory of the tutorial2 example. Tutorial2
+represents a steady state solver that can be ran with
+chipAirCoolingSimpleFoam executable in order to produce results.
+
+A sample results of running the executable in tutorial2 is shown in
+figures \ref{fig:fig4} and \ref{fig:fig5}. Figure \ref{fig:fig4} show
+the temperature distribution in the fluid and solid regions whereas
+figure \ref{fig:fig5} shows the velocity magnitude field in the fluid
+region.the effect of the contact resistance and the radiative source
+terms can be clearly seen in those figures.
+
+\begin{figure*}[htbp]
+\begin{center}
+\epsfig{figure=figures/Ttut2.eps, width = 10.0 cm,angle=0,clip=}
+\caption{Temperature distribution}
+\label{fig:fig4}
+\end{center}
+\end{figure*}
+
+\begin{figure*}[htbp]
+\begin{center}
+\epsfig{figure=figures/Utut3.eps, width = 10.0 cm,angle=0,clip=}
+\caption{velocity magnitude distribution}
+\label{fig:fig5}
+\end{center}
+\end{figure*}
+
+
+Tutorial3 represents the same chip-motherboard assembly with the
+difference that this example is unsteady flow and heat transfer with a
+proportional controller that regulates the variables on inflow
+boundary based on the observations made on the outflow boundary. The
+tutorial3 example can be found in ``run/tutorial3''
+directory and the results can be produced by running the
+``chipAirCoolingFoam'' executable. 
+
+Boundary conditions that define the inlet boundary variables and
+proportional controller parameters are given through the following
+velocity entry example:
+
+\begin{verbQuoteSmall}
+    fluidInlet
+    \{
+        type            controlledParabolicVelocity;
+        Umean           5;
+        n               (0 1 0);
+        y               (1 0 0);
+
+        obsFieldName    T;
+        obsPatchName    fluidOutlet;
+        target          290;
+        gain            1e-6;
+
+        value           uniform (0 5 0);
+    \}
+\end{verbQuoteSmall}
+
+The entry ``obsFieldName'' defines the field that is being observed on
+the patch which name is defined in the entry ``obsPatchName''. The
+target value of the observed field is given through entry ``target''
+whereas the system gain used in proportional controller is given
+through the entry ``gain''. The rest of the inputs in the velocity
+field boundary entry defines the parabolic velocity
+profile. Controller entries are used by the proportional controller
+code in order to drive the inlet control parameter to the value that
+gives desired observed variable value on the observed patch. The
+proportional controller achieves the target value by adjusting the
+control parameter through the following relation:
+
+\begin{equation}
+  \Phi_c = G(\Psi_o - \Psi_t)
+\end{equation}
+Here $\Phi_c$ is a control parameter, $\Psi_o$ and $\Psi_t$ are
+observed and target variables, whereas $G$ is the system gain. In the
+example given in tutorial3, observed variable is averaged temperature
+field T on the outlet, control variable is the volumetric flow
+rate. The target value was selected to be $T= 290^o\,K$ and the gain
+of the control system is selected to be $G=1E-06$ so that the
+controller does not cause excessive flow rates on the inlet. The
+controller will achieve the given value in the time marching algorithm
+thus allowing to observe time dependence of the flow and temperature
+fields.
+
+A sample results of running the executable code with the proportional
+control are given in figures \ref{fig:fig6} and \ref{fig:fig7}. These
+results show the effect of the proportional controller on both velocity
+and temperature fields when compared to figures \ref{fig:fig4}
+and \ref{fig:fig5}. Proportional controller is matching closely the
+desired temperature profile on the outlet causing somewhat different
+field distributions compared to the case without control.
+
+\begin{figure*}[htbp]
+\begin{center}
+\epsfig{figure=figures/Ttut3.eps, width = 10.0 cm,angle=0,clip=}
+\caption{Temperature distribution}
+\label{fig:fig6}
+\end{center}
+\end{figure*}
+
+\begin{figure*}[htbp]
+\begin{center}
+\epsfig{figure=figures/Utut3.eps, width = 10.0 cm,angle=0,clip=}
+\caption{Velocity magnitude distribution}
+\label{fig:fig7}
+\end{center}
+\end{figure*}
+
+
+
+\section*{Summary}
+
+In the course of the project, steady and unsteady flow solvers capable
+of simulating buoyant radiative turbulent flow with conjugate heat
+transfer was developed. In addition to the solvers developed, material
+library that defines zonal models for the solid material properties,
+contact resistance and heat equation source terms was
+developed. Furthermore, parabolic velocity profile with the simple
+proportional controller was also developed to allow the simulation of
+the controlled cooling of the chip-motherboard assemblies.
+
+
+\end{document}
+

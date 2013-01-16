@@ -1,0 +1,131 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.0.x                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       polyBoundaryMesh;
+    location    "constant/polyMesh";
+    object      boundary;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+18
+(
+    cabHeatTransmissiveWall
+    {
+        type            patch;
+        nFaces          0;
+        startFace       48406;
+    }
+    bayHeatTransmissiveWall
+    {
+        type            patch;
+        nFaces          0;
+        startFace       48406;
+    }
+
+    walls
+    {
+        type            patch;
+        nFaces          228;
+        startFace       48406;
+    }
+    topExtWall
+    {
+        type            patch;
+        nFaces          172;
+        startFace       48634;
+    }
+    toSolidR
+    {
+        type            patch;
+        nFaces          67;
+        startFace       48806;
+    }
+    cabInlet
+    {
+        type            patch;
+        nFaces          4;
+        startFace       48873;
+    }
+    toSolidL
+    {
+        type            patch;
+        nFaces          67;
+        startFace       48877;
+    }
+    passengers
+    {
+        type            patch;
+        nFaces          672;
+        startFace       48944;
+    }
+    bottomExtWall
+    {
+        type            patch;
+        nFaces          300;
+        startFace       49616;
+    }
+    core2
+    {
+        type            patch;
+        nFaces          118;
+        startFace       49916;
+    }
+    core1
+    {
+        type            patch;
+        nFaces          148;
+        startFace       50034;
+    }
+    bayInletL
+    {
+        type            patch;
+        nFaces          9;
+        startFace       50182;
+    }
+    bayInletR
+    {
+        type            patch;
+        nFaces          9;
+        startFace       50191;
+    }
+    cabOutletL
+    {
+        type            patch;
+        nFaces          4;
+        startFace       50200;
+    }
+    cabOutletR
+    {
+        type            patch;
+        nFaces          4;
+        startFace       50204;
+    }
+    bayOutletL
+    {
+        type            patch;
+        nFaces          5;
+        startFace       50208;
+    }
+    bayOutletR
+    {
+        type            patch;
+        nFaces          5;
+        startFace       50213;
+    }
+    defaultFaces
+    {
+        type            patch;
+        nFaces          52614;
+        startFace       50218;
+    }
+)
+
+// ************************************************************************* //

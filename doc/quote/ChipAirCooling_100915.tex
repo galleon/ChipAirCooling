@@ -1,0 +1,140 @@
+\input{preamble}
+
+% Print DRAFT on every page
+% ~~~~~~~~~~~~~~~~~~~~~~~~~
+%\usepackage[light]{draftcopy}
+%\draftcopySetGrey{0.9}
+%\psdraft
+%
+\renewcommand{\ReportType}{Project Proposal and Quote}
+\renewcommand{\ReportNo}{MS/EADS/002}
+%
+\begin{document}
+%
+\title
+{\bfseries
+  Simulation of the Air Cooling of electronic chips assemblies
+}
+%
+\author
+{
+     \ReportType\\ \\ \\
+     Henrik Rusche\\
+     Wikki GmbH\\ \\
+     \ReportNo
+}
+%
+\maketitle
+%
+
+\section*{Scope of Work}
+
+This project proposal and quote has been assembled following the discussions
+with EADS Innovation Works India in Bangalore (The Client) as requested on
+9~August~2010.
+
+The objective of the project is to perform an air cooling simulation of
+electronic chip assemblies.
+
+\section*{Work Package}
+
+The work undertaken in this project consists of the following components:
+%
+\begin{enumerate}
+\item Implementation and testing of a conjugate heat transfer solver with the
+  following characteristics:
+
+\begin{enumerate}
+  \item Steady-state, incompressible flow solver;
+  \item Steady-state heat conduction with spatially varying properties
+    determined by a material library;
+  \item Energy equation is solved in a coupled manner over all components using
+    the coupled matrices technology available in OpenFOAM extend;
+  \item Radiation modelling (P1);
+  \item Boussinesq approximation for buoyancy-driven flow;
+  \item Incompressible turbulence model with standard wall-functions or low-Re
+    number treatment.
+\end{enumerate}
+
+\item Implementation and testing of a transient, conjugate heat transfer solver
+  with the characteristics of the solver in item 1;
+
+\item Material properties library for heat capacity, conductivity and heat
+  source using face zones to locate the component in the mesh.
+  Properties are spatially uniform scalars;
+
+\item Addition of contact heat resistance to material properties library using
+  face zones to locate the component in the mesh. Properties are spatially
+  uniform scalars;
+
+\item Implementation and testing of a fixed value boundary condition which is
+  dependant of a field cell value through an algebraic function provided by the
+  Client; \label{item:customBC}
+
+\item Preparation of a tutorial case according to the specifications provided by
+  the Client;
+
+\item Running the case, post-processing and preparation of results;
+
+\item Detailed report of the project outcome;
+
+\end{enumerate}
+%
+
+The validation of the simulation environment will be carried out by the Client.
+Assistance will be provided by Wikki under the current support contract.
+
+\section*{Deliveries of the Client}
+
+\begin{enumerate}
+\item Mesh consisting of a maximum of 2 regions and 250.000 cells in a file
+  format that can be converted to OpenFOAM (including the boundary, region, face
+  and cell zone definitions);
+\item Boundary conditions;
+\item Thermo-physical properties;
+\item Algebraic function for item \ref{item:customBC}.
+\end{enumerate}
+
+\newpage
+
+\section*{Quote}
+
+Based on the above, Wikki GmbH provides the quote for the total sum of
+{\bfseries EUR~10\,000.00}, payable on project completion.  The quoted price is a
+firm fixed price.
+
+%  Travel expenses are included in the quote.
+
+The project is scheduled to take place over a 4-week period.  The project work
+will kick off within 3 days of confirmation.  This quote is valid until the
+15~Oktober~2010.  A formal written response by a representative of the Client
+is required to initiate the work.
+
+%Estimated travel expenses for the for the on-site visit at Waiblingen, Germany are EUR 800 per visit.
+
+%The date for the on-site visit shall be agreed with the Client upon completion of the simulation.
+
+\section*{Payment Terms}
+
+A formal written response by a representative of the Client is required to
+initiate the work. All invoices are payable by direct money transfer within 30
+days NET of invoice submission.
+
+\vspace{0.2in}
+\begin{flushleft}
+On behalf of Wikki GmbH\\
+%
+%\vspace{0.1in}
+%\epsfig{file=bluePen.eps} \\
+%\vspace{0.5in}
+%Prof. Hrvoje Jasak
+\vspace{3mm}
+\quad\epsfig{file=henrik1.eps,height=1.5cm} \\
+Dr. Henrik Rusche
+\end{flushleft}
+
+%\bibliographystyle{hgw}
+%\bibliography{bc}
+
+%
+\end{document}

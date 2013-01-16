@@ -34,7 +34,11 @@ boundaryField
 
     cabHeatTransmissiveWall
     {
+<<<<<<< HEAD
+        type            chtRcThermalDiffusivityResistance;
+=======
         type            zeroGradient;
+>>>>>>> client
         conductivity    uniform 5;
         remoteField     kappaEff;
         value           uniform 1e-3;
