@@ -42,4 +42,8 @@ fvPatchFields/adiabatic/adiabaticFvPatchScalarField.C
 functionObjects/heatFlux/heatFlux/heatFlux.C
 functionObjects/heatFlux/heatFluxFunctionObject/heatFluxFunctionObject.C
 
+backport/greyDiffusiveViewFactor/greyDiffusiveViewFactorFixedValueFvPatchScalarField.C
+backport/singleCellFvMesh/singleCellFvMesh.H
+backport/viewFactor2/viewFactor2.C
+
 LIB = $(FOAM_USER_LIBBIN)/libairbusMaterialModels

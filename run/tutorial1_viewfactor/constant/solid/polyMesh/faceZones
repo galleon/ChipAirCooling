@@ -1,0 +1,35 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM Extend Project: Open source CFD        |
+|  \\    /   O peration     | Version:  1.6-ext                               |
+|   \\  /    A nd           | Web:      www.extend-project.de                 |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       regIOobject;
+    location    "constant/polyMesh";
+    object      faceZones;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+2
+(
+contactSurface
+{
+    type faceZone;
+faceLabels      List<label> 10(8 27 46 65 84 103 122 141 160 175);
+flipMap         List<bool> 10{0};
+}
+
+leftZone
+{
+    type faceZone;
+faceLabels      List<label> 10(200 201 202 203 204 205 206 207 208 209);
+flipMap         List<bool> 10{0};
+}
+)
+
+// ************************************************************************* //
