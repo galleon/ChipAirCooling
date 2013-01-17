@@ -120,15 +120,11 @@ chtRcThermalDiffusivityFvPatchScalarField::calcThermalDiffusivity
     const fvMesh& mesh = p.boundaryMesh().mesh();
     const magLongDelta& mld = magLongDelta::New(mesh);
 
-//    const fvPatch& np = neighbour.patch();
-//    const magLongDelta& smld = magLongDelta::New(np.boundaryMesh().mesh());
-
     const chtRcTemperatureFvPatchScalarField& TwOwn =
         dynamic_cast<const chtRcTemperatureFvPatchScalarField&>
         (
             p.lookupPatchField<volScalarField, scalar>("T")
         );
-
     scalarField& k = owner;
     const scalarField& fOwn = owner.originalPatchField();
     const scalarField TcOwn = TwOwn.patchInternalField();
@@ -148,28 +144,25 @@ chtRcThermalDiffusivityFvPatchScalarField::calcThermalDiffusivity
     {
         Field<VectorN<scalar, 4> > lData(neighbour.size());
 
+        const scalarField& lfNei = neighbour.originalPatchField();
+        scalarField lTcNei = TwOwn.shadowPatchField().patchInternalField();
+
         forAll(lData, facei)
         {
-            const scalarField& fNei = neighbour.originalPatchField();
-            scalarField TcNei = TwOwn.shadowPatchField().patchInternalField();
-
-            forAll(lData, facei)
-            {
-                lData[facei][0] = TcNei[facei];
-                lData[facei][1] = fNei[facei];
-            }
+            lData[facei][0] = lTcNei[facei];
+            lData[facei][1] = lfNei[facei];
         }
 
         if(TwOwn.shadowPatchField().radiation())
         {
-            const scalarField& QrNei =
+            const scalarField& lQrNei =
                 owner.lookupShadowPatchField<volScalarField, scalar>("Qr");
-            const scalarField& TwNei = TwOwn.shadowPatchField();
+            const scalarField& lTwNei = TwOwn.shadowPatchField();
 
             forAll(lData, facei)
             {
-                lData[facei][2] = TwNei[facei];
-                lData[facei][3] = QrNei[facei];
+                lData[facei][2] = lTwNei[facei];
+                lData[facei][3] = lQrNei[facei];
             }
         }
 
@@ -207,24 +200,14 @@ chtRcThermalDiffusivityFvPatchScalarField::calcThermalDiffusivity
     //Info << "TcNei = " << TcNei << endl;
     //Info << "DeltaT = " << TcNei - TcOwn << endl;
 
-    //Info << "QrOwn = " << QrOwn << endl;
-    //Info << "QrNei = " << QrNei << endl;
-    //Info << "k1 + k2 = " << (kOwn + kNei) << endl;
+    //Info << "Qr = " << Qr << endl;
+    //Info << "kOwn + kNei = " << (kOwn + kNei) << endl;
  
     //Info << "k = " << k << endl;
     
-    // Correction for radiation
-    //scalarField kCorr = (QrOwn + QrNei)*kOwn;
-    //kCorr /= p.deltaCoeffs()*(kOwn + kNei)*stabilise(TcNei - TcOwn, SMALL);
-
-    //scalarField kCorr = kNei*QrOwn - kOwn*QrNei;
-    //kCorr /= p.deltaCoeffs()*(kOwn + kNei)*stabilise(TcOwn - TcNei, SMALL);
-
-    k = TwOwn*(fourQro + Qr) - TcOwn*fourQro;
-    k /= stabilise(TcNei - TcOwn, SMALL);
-    k += TwOwn*kNei;
-    k *= kOwn;
-    k /= p.deltaCoeffs()*(TwOwn*(kOwn + kNei) + fourQro);
+    k = kOwn*(TwOwn*(kNei*(TcNei - TcOwn) + Qr + fourQro) - TcOwn*fourQro);
+    k /= stabilise((fourQro + TwOwn*(kOwn + kNei))*(TcNei - TcOwn), SMALL);
+    k /= p.deltaCoeffs();
 
     //Info << "k = " << k << endl;
 
@@ -243,16 +226,13 @@ void
 chtRcThermalDiffusivityFvPatchScalarField::calcTemperature
 (
     chtRcTemperatureFvPatchScalarField& TwOwn,
-    const chtRcTemperatureFvPatchScalarField& TwNei,
+    const chtRcTemperatureFvPatchScalarField& neighbour,
     const chtRegionCoupleBase& ownerK
 ) const
 {
     const fvPatch& p = TwOwn.patch();
     const fvMesh& mesh = p.boundaryMesh().mesh();
     const magLongDelta& mld = magLongDelta::New(mesh);
-
-//    const fvPatch& np = neighbour.patch();
-//    const magLongDelta& smld = magLongDelta::New(np.boundaryMesh().mesh());
 
     const scalarField& fOwn = ownerK.originalPatchField();
     const scalarField TcOwn = TwOwn.patchInternalField();
@@ -270,30 +250,29 @@ chtRcThermalDiffusivityFvPatchScalarField::calcTemperature
     }
 
     {
-        Field<VectorN<scalar, 4> > lData(TwNei.size());
+        Field<VectorN<scalar, 4> > lData(neighbour.size());
 
+        const scalarField& lfNei =
+            ownerK.shadowPatchField().originalPatchField();
+        scalarField lTcNei =
+            TwOwn.shadowPatchField().patchInternalField();
+
+        forAll(lData, facei)
         {
-            const scalarField& fNei =
-                ownerK.shadowPatchField().originalPatchField();
-            scalarField TcNei = TwOwn.shadowPatchField().patchInternalField();
-
-            forAll(lData, facei)
-            {
-                lData[facei][0] = TcNei[facei];
-                lData[facei][1] = fNei[facei];
-            }
+            lData[facei][0] = lTcNei[facei];
+            lData[facei][1] = lfNei[facei];
         }
 
         if(TwOwn.shadowPatchField().radiation())
         {
-            const scalarField& TwNei = TwOwn.shadowPatchField();
-            const scalarField& QrNei =
+            const scalarField& lTwNei = TwOwn.shadowPatchField();
+            const scalarField& lQrNei =
                 TwOwn.lookupShadowPatchField<volScalarField, scalar>("Qr");
 
             forAll(lData, facei)
             {
-                lData[facei][2] = TwNei[facei];
-                lData[facei][3] = QrNei[facei];
+                lData[facei][2] = lTwNei[facei];
+                lData[facei][3] = lQrNei[facei];
             }
         }
 
@@ -317,11 +296,6 @@ chtRcThermalDiffusivityFvPatchScalarField::calcTemperature
         }
     }
 
-    // Do interpolation
-    harmonic<scalar> interp(mesh);
-    scalarField weights = interp.weights(fOwn, fNei, p);
-    const scalarField kHarm = weights*fOwn + (1.0 - weights)*fNei;
-
     const scalarField kOwn = fOwn/(1.0 - p.weights())/mld.magDelta(p.index());
     const scalarField kNei = fNei/p.weights()/mld.magDelta(p.index());
 
@@ -331,12 +305,9 @@ chtRcThermalDiffusivityFvPatchScalarField::calcTemperature
     //Info << "TcNei = " << TcNei << endl;
     //Info << "Qr = " << Qr << " Sum = " << sum(Qr*p.magSf()) << endl;
 
-    //TwOwn = kOwn*TcOwn + kNei*TcNei + Qr;
-    //TwOwn /= kOwn + kNei;
-
-    // Update is proportional to old Tw! Must divide first
-    TwOwn /= TwOwn*(kOwn + kNei) + fourQro;
-    TwOwn *= fourQro + Qr + kOwn*TcOwn + kNei*TcNei;
+    TwOwn *=
+        (fourQro + Qr + kOwn*TcOwn + kNei*TcNei)
+       /(TwOwn*(kOwn + kNei) + fourQro);
 
     //Info << "TwOwn = " << TwOwn << endl;
 

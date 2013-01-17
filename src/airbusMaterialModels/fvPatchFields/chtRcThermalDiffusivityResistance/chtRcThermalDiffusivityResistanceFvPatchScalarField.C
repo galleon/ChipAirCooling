@@ -157,20 +157,15 @@ chtRcThermalDiffusivityResistanceFvPatchScalarField::calcThermalDiffusivity
     {
         Field<VectorN<scalar, 5> > lData(neighbour.size());
 
-        {
-            const scalarField& lfNei =
-                 neighbour.originalPatchField();
-            scalarField lTcNei =
-                 TwOwn.shadowPatchField().patchInternalField();
-            const scalarField& lTwNei =
-                 TwOwn.shadowPatchField();
+        const scalarField& lfNei = neighbour.originalPatchField();
+        scalarField lTcNei = TwOwn.shadowPatchField().patchInternalField();
+        const scalarField& lTwNei = TwOwn.shadowPatchField();
 
-            forAll(lData, facei)
-            {
-                lData[facei][0] = lTcNei[facei];
-                lData[facei][1] = lfNei[facei];
-                lData[facei][2] = lTwNei[facei];
-            }
+        forAll(lData, facei)
+        {
+            lData[facei][0] = lTcNei[facei];
+            lData[facei][1] = lfNei[facei];
+            lData[facei][2] = lTwNei[facei];
         }
 
         if(TwOwn.shadowPatchField().radiation())
@@ -344,20 +339,18 @@ chtRcThermalDiffusivityResistanceFvPatchScalarField::calcTemperature
     {
         Field<VectorN<scalar, 5> > lData(neighbour.size());
 
-        {
-            const scalarField& lfNei =
-                ownerK.shadowPatchField().originalPatchField();
-            scalarField lTcNei =
-                TwOwn.shadowPatchField().patchInternalField();
-            const scalarField& lTwNei =
-                TwOwn.shadowPatchField();
+        const scalarField& lfNei =
+            ownerK.shadowPatchField().originalPatchField();
+        scalarField lTcNei =
+            TwOwn.shadowPatchField().patchInternalField();
+        const scalarField& lTwNei =
+            TwOwn.shadowPatchField();
 
-            forAll(lData, facei)
-            {
-                lData[facei][0] = lTcNei[facei];
-                lData[facei][1] = lfNei[facei];
-                lData[facei][2] = lTwNei[facei];
-            }
+        forAll(lData, facei)
+        {
+            lData[facei][0] = lTcNei[facei];
+            lData[facei][1] = lfNei[facei];
+            lData[facei][2] = lTwNei[facei];
         }
 
         if(TwOwn.shadowPatchField().radiation())
@@ -411,10 +404,6 @@ chtRcThermalDiffusivityResistanceFvPatchScalarField::calcTemperature
             cond = conductivity_;
         }
     }
-
-    // Do interpolation
-    harmonic<scalar> interp(mesh);
-    scalarField weights = interp.weights(fOwn, fNei, p);
 
     const scalarField kOwn = fOwn/(1.0 - p.weights())/mld.magDelta(p.index());
     const scalarField kNei = fNei/p.weights()/mld.magDelta(p.index());
